@@ -1,0 +1,303 @@
+module Cubeball.View
+
+open Fable.Core
+open Fable.Core.JsInterop
+open Fable.React
+open Fable.React.Props
+open Elmish
+open Types
+open Common
+
+let connectNotification =
+    div [ClassName "notification"]
+        [span [ClassName "icon"] [i [ClassName "mdi mdi-alert-circle"] []]
+         span [] [str "Connect your wallet"]]
+
+let loadingNotification =
+    div [ClassName "notification has-text-centered"]
+        [div [ClassName "lds-dual-ring"] []]
+
+let noCubeheadsNotification =
+    div [ClassName "notification has-text-centered"]
+        [h2 [] [b [] [str "Your wallet contains no Cubeheads"]]]
+
+let notEnoughCubeheadsNotification =
+    div [ClassName "notification has-text-centered"]
+        [h2 [] [b [] [str "You need at least four Cubeheads or Dronecubes to form a team, including at least one Cubehead"]]]
+
+let teamPositions position =
+    let getCls pos = if pos = position then "team-position active" else "team-position"
+    table [ClassName "team-diagram"]
+        [tr [] [td [ColSpan 3; ClassName "is-size-7"] [i [] [b [] [str "Attacking"]]]]
+         tr []
+            [td [] []
+             td [] [div [ClassName <| getCls 1] []]
+             td [] []]
+         tr []
+             [td [] [div [ClassName <| getCls 2] []]
+              td [] []
+              td [] [div [ClassName <| getCls 3] []]]
+         tr []
+            [td [] []
+             td [] [div [ClassName <| getCls 4] []]
+             td [] []]
+         tr [] [td [ColSpan 3; ClassName "is-size-7"] [i [] [b [] [str "Defending"]]]]]
+
+let team model dispatch =
+    let nteam =
+        match model.team with
+        | None | Some [||] ->
+            let dt = model.draftTeam |> Array.choose id
+            if dt.Length = 4 && dt |> Array.filter snd |> Array.length = 2 then Some dt else None
+        | Some team ->
+            let dt = Array.zip team model.draftTeam |> Array.map (function | (_, Some (i, c)) -> i, c | (i, c), _ -> i, c)
+            if dt |> Array.filter snd |> Array.length = 2 then Some dt else None
+    let saveRevertBtn =
+        let btns =
+            div [ClassName "buttons"]
+                [button [OnClick (fun _ -> dispatch SaveTeamChanges);ClassName "button is-primary"]
+                    [span [ClassName "icon"] [i [ClassName "mdi mdi-check-circle-outline mdi-24px"] []]
+                     span [] [b [] [str "Save"]]]
+                 button [OnClick (fun _ -> dispatch CancelTeamChanges); ClassName "button is-light"]
+                    [span [ClassName "icon"] [i [ClassName "mdi mdi-cancel mdi-24px"] []]
+                     span [] [b [] [str "Cancel Changes"]]]]
+        match model.team, nteam with
+        | _, None -> ofOption None
+        | Some team, Some nteam when team = nteam -> ofOption None
+        | _, Some _ -> btns
+    let rowContent n =
+        let btn =
+            let txt =
+                match model.team, model.draftTeam.[n] with
+                | Some [||], None -> "Select Cubehead"
+                | _, Some _ -> "Change Cubehead"
+                | Some _, None -> "Change Cubehead"
+            button [Disabled model.saving; OnClick (fun _ -> dispatch <| SelectingCubehead n); ClassName "button is-primary is-rounded is-normal is-responsive"]
+                [span [] [b [] [str txt]]
+                 span [ClassName "icon"] [i [ClassName "mdi mdi-arrow-right-bold-hexagon-outline mdi-24px"] []]]
+        let title =
+            match model.team, model.draftTeam.[n] with
+            | Some [||], None ->
+                h1 [ClassName "has-text-grey-light"] [i [] [str "No Cubehead Selected"]]
+            | _, Some (ci, _) ->
+                let cubehead = model.cubeheads.Value.[ci]
+                h1 [] [str cubehead.cubehead.name]
+            | Some t, None ->
+                let cubehead = model.cubeheads.Value.[t.[n] |> fst]
+                h1 [] [str cubehead.cubehead.name]
+        let parentSelect =
+            let ps checked disableUnchecked =
+                div [ClassName "parent-select"]
+                    [label [ClassName <| if ((not checked) && disableUnchecked) then "disabled" else ""]
+                        [input [Disabled ((not checked) && disableUnchecked);Type "checkbox"; Checked checked; OnChange (fun _ -> dispatch <| SetCaptainState (n, not checked))]
+                         span [ClassName "icon"] [i [ClassName "mdi mdi-check-bold"] []]]
+                     span [] [b [] [str "Captain"]]]
+            match model.team, model.draftTeam.[n] with
+            | Some [||], None -> ofOption None
+            | _, Some (_, checked) ->
+                let disableUnchecked = match nteam with | Some _ -> true | _ -> false
+                ps checked disableUnchecked
+            | Some t, None ->
+                let disableUnchecked = match nteam with | Some _ -> true | _ -> false
+                ps (t.[n] |> snd) disableUnchecked
+        let img =
+            match model.team, model.draftTeam.[n] with
+            | Some [||], None ->
+                span [ClassName "icon cubehead-not-selected"] [i [ClassName "mdi mdi-cube-off-outline"] []]
+            | _, Some (ci, _) ->
+                let cubehead = model.cubeheads.Value.[ci]
+                let image = """data:image/svg+xml, """ + JS.encodeURIComponent cubehead.cubehead.svg
+                let imageIndex = cubehead.cubehead.index % 305
+                let image = "/img/cubeheads/cubehead (" + imageIndex.ToString() + ").png"
+                img [Src (image)]
+            | Some t, None ->
+                let cubehead = model.cubeheads.Value.[t.[n] |> fst]
+                let image = """data:image/svg+xml, """ + JS.encodeURIComponent cubehead.cubehead.svg
+                let imageIndex = cubehead.cubehead.index % 305
+                let image = "/img/cubeheads/cubehead (" + imageIndex.ToString() + ").png"
+                img [Src (image)]
+        match model.team with
+        | Some _ ->
+            article [ClassName "media"]
+                [figure [ClassName "media-left"] [img]
+                 div [ClassName "media-content"]
+                    [div [ClassName "content"] [title]
+                     btn
+                     parentSelect]]
+            
+    let row i =
+        tr []
+            [td [] [teamPositions (i + 1)]
+             td []
+                [rowContent i]]
+    section [ClassName "section box"]
+        [saveRevertBtn
+         table [ClassName "table is-fullwidth team-table"]
+            [thead []
+                [tr []
+                    [th [] [str "Position"]
+                     th [] [str "Cubehead"]]]
+             tbody [] (List.init 4 row)]]
+
+let results model accountData dispatch =
+    match accountData with
+    | None -> connectNotification
+    | Some _ ->
+        match model.results with
+        | None -> loadingNotification
+        | Some _ when model.team = Some [||] -> notEnoughCubeheadsNotification
+        | Some results ->
+            results |> List.map (fun result ->
+                let resultTxt, resultCls =
+                    match result.score with
+                    | (a, b) when a > b -> "WIN", "has-text-success"
+                    | (a, b) when a < b -> "LOSE", "has-text-danger"
+                    | _ -> "DRAW", "has-text-dark"
+                let dateTxt = result.date.ToLongDateString()
+                let child =
+                    match result.score with
+                    | (x, y) when x > y ->
+                       [div [ClassName "child-cube"]
+                           [div [ClassName "has-text-centered"] [span [ClassName "icon"] [i [ClassName "mdi mdi-arrow-down-bold-hexagon-outline"] []]]
+                            ViewComponents.cubeheadsMini result.childCube dispatch]]
+                            |> ofList
+                    | _ -> ofOption None
+                div [ClassName "box result"]
+                    [h1 [ClassName resultCls] [b [] [str resultTxt]]
+                     h2 [] [b [] [str dateTxt]]
+                     div [ClassName "columns"]
+                        [div [ClassName "column is-4"]
+                            [div [ClassName "has-text-centered"] [b [] [str "YOUR TEAM"]]
+                             div [ClassName "result-team"] (result.userTeam |> Array.map (fun c -> ViewComponents.cubeheadsMini c dispatch) |> Array.toList)
+                             ]
+                         div [ClassName "column is-4 has-text-centered"]
+                            [div [ClassName "game"]
+                                [img [ClassName (match result.score with | (x, y) when x > y -> "win" | _ -> ""); Src result.trophySrc]]
+                             div [ClassName "score"]
+                                [div [] [span [] [str <| (fst result.score).ToString()]; span [] [str <| (snd result.score).ToString()]]]
+                             child]
+                         div [ClassName "column is-4"]
+                            [div [ClassName "has-text-centered"] [b [] [str "OPPOSITION TEAM"]]
+                             div [ClassName "result-team"] (result.oppTeam |> Array.map (fun c -> ViewComponents.cubeheadsMini c dispatch) |> Array.toList)]]
+                     ]) |> ofList
+
+let cubeheadsTab model accountData dispatch =
+    match accountData with
+    | None -> connectNotification
+    | Some _ ->
+        match model.cubeheads with
+        | None -> loadingNotification
+        | Some [||] -> noCubeheadsNotification
+        | Some cubeheads ->
+            Elmish.React.Common.lazyView2With refEquals (fun cubeheads dispatch ->
+                let elements = cubeheads |> Array.map (fun wc -> ViewComponents.cubeheadsCompact wc.cubehead dispatch) |> Array.toList
+                ViewComponents.cubeheadsGrid elements) cubeheads dispatch
+
+let teamTab model accountData dispatch =
+    let savingTxt =
+        match model.saving with
+        | true ->
+            div [ClassName "notification has-text-centered"]
+                [div [ClassName "lds-dual-ring"] []
+                 div [ClassName "is-size-4 has-text-white"] [b [] [str "Saving team to blockchain"]]]
+        | false -> ofOption None
+    match accountData with
+    | None -> connectNotification
+    | Some _ ->
+        match model.cubeheads with
+        | None -> loadingNotification
+        | Some [||] -> noCubeheadsNotification
+        | Some x when x.Length < 4 -> notEnoughCubeheadsNotification
+        | _ ->
+            div []
+                [savingTxt
+                 team model dispatch]
+
+let resultsTab model accountData dispatch =
+    match accountData with
+    | None -> connectNotification
+    | Some _ ->
+        results model accountData dispatch
+
+let selectCubehead n model accountData dispatch =
+    match accountData with
+    | None -> failwith "ni"
+    | Some _ ->
+        match model.cubeheads with
+        | None -> failwith "ni"
+        | Some [||] -> failwith "ni"
+        | Some cubeheads ->
+            let alreadyIncluded =
+                match model.team with
+                | None | Some [||] -> model.draftTeam |> Array.choose id |> Array.map fst
+                | Some team -> Array.zip team model.draftTeam |> Array.map (fun (t, dt) -> match dt with Some (i, _) -> i | _ -> fst t)
+            div [] 
+               [section [ClassName "section"]
+                    [div [ClassName "box"]
+                       [section [ClassName "back-breadcrumb mb8"]
+                            [a [OnClick (fun _ -> dispatch CancelSelectCubehead)]
+                                [span [ClassName "icon"] [i [ClassName "mdi mdi-chevron-left"] []]
+                                 span [] [b [] [str "Back to Team"]]]
+                             span [Style [MarginLeft "1rem"]; ClassName "icon"] [i [ClassName "mdi mdi-circle-medium"] []]
+                             span [Style [MarginLeft "1rem"]] [b [] [str <| "Select for Pos " + (n + 1).ToString()]]]
+                        div [] (cubeheads
+                            |> Array.toList
+                            |> List.mapi (fun ci wc -> (ci, wc))
+                            |> List.filter (fun (ci, _) -> not (alreadyIncluded |> Array.contains (ci)))
+                            |> List.map (fun (ci, wc) ->
+                        let image = """data:image/svg+xml, """ + JS.encodeURIComponent wc.cubehead.svg
+                        let imageIndex = wc.cubehead.index % 305
+                        let image = "/img/cubeheads/cubehead (" + imageIndex.ToString() + ").png"
+                        article [ClassName "media"]
+                            [figure [ClassName "media-left"]
+                                [img [Style [Height "12rem"; Width "12rem"]; Src (image)]]
+                             div [ClassName "media-content"]
+                                [div [ClassName "content"]
+                                    [div [ClassName "mb4"] [ViewComponents.cubeheadDetail wc.cubehead]
+                                     nav [ClassName "level"]
+                                         [div [ClassName "level-left"] []
+                                          div [ClassName "level-right"]
+                                             [div [ClassName "level-item"]
+                                                [button
+                                                    [Disabled model.saving
+                                                     OnClick (fun _ -> dispatch <| SelectCubehead (n, ci)); ClassName "button is-primary"]
+                                                        [b [] [str <| "Select"]]]]]]]]))]]]
+
+let root model accountData dispatch =
+    match model.selectingCubehead with
+    | None ->
+        div []
+            [div [ClassName "tabs is-centered is-toggle is-toggle-rounded cubeball-tabs is-hidden-desktop is-small"]
+                [ul []
+                    [li [ClassName (if model.activeTab = AllCubeheads then "is-active" else "")]
+                        [a  [OnClick (fun _ -> dispatch <| SelectTab AllCubeheads)]
+                            [span [ClassName "icon"] [i [ClassName "mdi mdi-cube-scan mdi-24px"] []]
+                             ]]
+                     li [ClassName (if model.activeTab = Team then "is-active" else "")]
+                        [a [OnClick (fun _ -> dispatch <| SelectTab Team)]
+                            [span [ClassName "icon"] [i [ClassName "mdi mdi-soccer-field mdi-24px"] []]
+                             ]]
+                     li [ClassName (if model.activeTab = Results then "is-active" else "")]
+                        [a [OnClick (fun _ -> dispatch <| SelectTab Results)]
+                            [span [ClassName "icon"] [i [ClassName "mdi mdi-trophy mdi-24px"] []]
+                             ]]]]
+             div [ClassName "tabs is-centered is-toggle is-toggle-rounded cubeball-tabs is-hidden-touch"] 
+                [ul []
+                    [li [ClassName (if model.activeTab = AllCubeheads then "is-active" else "")]
+                        [a  [OnClick (fun _ -> dispatch <| SelectTab AllCubeheads)]
+                            [span [ClassName "icon"] [i [ClassName "mdi mdi-cube-scan mdi-24px"] []]
+                             span [] [str "Cubeheads"]]]
+                     li [ClassName (if model.activeTab = Team then "is-active" else "")]
+                        [a [OnClick (fun _ -> dispatch <| SelectTab Team)]
+                            [span [ClassName "icon"] [i [ClassName "mdi mdi-soccer-field mdi-24px"] []]
+                             span [] [str "Team"]]]
+                     li [ClassName (if model.activeTab = Results then "is-active" else "")]
+                        [a [OnClick (fun _ -> dispatch <| SelectTab Results)]
+                            [span [ClassName "icon"] [i [ClassName "mdi mdi-trophy mdi-24px"] []]
+                             span [] [str "Results"]]]]]
+             match model.activeTab with
+             | AllCubeheads -> cubeheadsTab model accountData dispatch
+             | Team -> teamTab model accountData dispatch
+             | Results -> resultsTab model accountData dispatch]
+    | Some n ->
+        selectCubehead n model accountData dispatch

@@ -1,0 +1,623 @@
+$fa-font-path: "./../node_modules/@fortawesome/fontawesome-free/webfonts/"
+@import './../node_modules/@fortawesome/fontawesome-free/scss/fontawesome'
+@import './../node_modules/@fortawesome/fontawesome-free/scss/regular'
+@import './../node_modules/@fortawesome/fontawesome-free/scss/solid'
+@import './../node_modules/@fortawesome/fontawesome-free/scss/brands'
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Titillium+Web:wght@400&display=swap')
+
+$primary: #80c0f0
+$footer-background-color: #445255
+$blue: #45a3dc
+$red: #f00000
+$green: #4fd04f
+$darkblue: #000077
+
+@import '../node_modules/bulma/bulma'
+
+body
+  font-family: 'Titillium Web', sans-serif
+
+.has-text-darkblue
+  color: $darkblue !important
+
+.twitter
+  color: #55acee !important // Override bulma
+  border-color: #55acee
+
+.github
+  color: $black !important // Override bulma
+  border-color: #202020
+
+.brand
+  font-family: 'Orbitron', sans-serif !important
+
+h1
+  font-family: 'Orbitron', sans-serif
+
+.auction-countdown .title
+  background-color: rgba(80, 80, 80, 0.15)
+  color: black
+  border-radius: 0.5rem
+  padding: 1rem 1rem
+  margin-top: -0.5rem !important
+  font-variant-numeric: tabular-nums
+  font-family: "Titillium Web", sans-serif
+  letter-spacing: 0.15rem
+
+.auction-countdown .level-item > div
+  width: 16rem
+
+.auction-batch-imgs img
+  @include fullhd
+    height: 12rem
+    width: 12rem
+  @include widescreen-only
+    height: 10rem
+    width: 10rem
+  @include desktop-only
+    height: 8rem
+    width: 8rem
+  @include tablet-only
+    height: 5.5rem
+    width: 5.5rem
+  @include mobile
+    height: 3rem
+    width: 3rem
+
+.auction-cubehead img
+  @include fullhd
+    height: 16rem
+    width: 16rem
+  @include widescreen-only
+    height: 14rem
+    width: 14rem
+  @include desktop-only
+    height: 12rem
+    width: 12rem
+  @include tablet-only
+    height: 22rem
+    width: 22rem
+  @include mobile
+    height: 12rem
+    width: 12rem
+
+.media.auction-cubehead
+  border-top: 1px solid rgba(80, 80, 80, 0.15)
+  padding-top: 2.5rem
+
+.media.auction-cubehead figure
+  margin-left: 0px
+
+.cubehead img
+  @include fullhd
+    height: 32rem
+    width: 32rem
+  @include widescreen-only
+    height: 28rem
+    width: 28rem
+  @include desktop-only
+    height: 24rem
+    width: 24rem
+  @include tablet-only
+    height: 16rem
+    width: 16rem
+  @include mobile
+    height: 12rem
+    width: 12rem
+
+.intro h1, .about h1
+  @include desktop
+    font-size: 3rem
+  @include mobile
+    font-size: 2.25rem
+
+.result h1
+  @include desktop
+    font-size: 3rem
+  @include mobile
+    font-size: 2.25rem
+
+.notification
+  background-color: rgba(20, 20, 20, 0.9)
+  border: 1px solid rgba(0, 0, 0, 0.9)
+  border-radius: 12px
+  color: white
+
+.content p
+  font-size: 1.25rem
+
+.box > .section
+  @include mobile
+    padding: 2rem 0.5rem
+
+.intro
+  margin-bottom: 0rem !important
+
+.intro .column:first-child
+  @include tablet
+    padding-right: 3rem
+
+.visual-trait .tag b
+  margin-right: 0.5rem
+
+.strengths
+  font-size: 0.75rem
+  max-width: 16rem
+
+.strengths tr, .strengths td
+  border-bottom-width: 0px !important
+
+.strengths td.bar-on
+  background-color: #80c0f0
+  border-bottom-color: white !important
+  border-bottom-width: 1px !important
+
+.strengths td.bar-off
+  border-bottom-color: white !important
+  border-bottom-width: 1px !important
+
+.strengths td:first-child
+  width: 6rem
+
+.strategy i
+  font-size: 20px
+
+.mb4
+  margin-bottom: 1.5rem
+
+.mb8
+  margin-bottom: 3rem
+
+.pb0
+  padding-bottom: 0 !important
+
+.pt0
+  padding-top: 0 !important
+
+.cubehead-tile
+  margin: 0 !important
+
+.cubehead-tile h1
+  font-size: 1em
+
+.cubehead-grid
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr))
+  grid-gap: 2rem
+
+.team-diagram
+  border-radius: 1rem
+  margin-left: auto
+  margin-right: auto
+  width: 10rem
+  height: 12rem
+  @include mobile
+    width: 4rem
+    height: 9rem
+
+.team-diagram td
+  text-align: center !important
+  vertical-align: middle !important
+  background: none !important
+  border: none !important
+  @include mobile
+    padding: 0rem 0rem
+
+.team-position
+  border-radius: 50%
+  background-color: #ccc
+  border: solid 3px #bbb
+  color: white
+  width: 1.5rem
+  height: 1.5rem
+  margin-left: auto
+  margin-right: auto
+  padding-top: 4px
+  font-weight: bold
+  @include mobile
+    width: 1rem
+    height: 1rem
+
+.team-position.active
+  background-color: $primary
+  border: solid 3px black
+  @include mobile
+    border-width: 2px
+
+.team-table
+  background-color: rgba(0, 0, 0, 0)
+
+.team-table h1
+  margin-bottom: 3rem
+
+.team-table th:first-child
+  width: 6rem
+
+.team-table td:first-child
+  text-align: center
+  background-color: rgba(80, 80, 80, 0.15)
+  color: #555
+  vertical-align: middle
+  font-weight: bold
+  border-bottom: 1px solid rgba(40, 40, 40, 0.15)
+
+.team-table .media figure img
+  @include desktop
+    height: 12rem
+    width: 12rem
+  @include tablet-only
+    height: 8rem
+    width: 8rem
+  @include mobile
+    height: 6rem
+    width: 6rem
+
+.cubehead-not-selected
+  background-color: #eee
+  width: 12rem
+  height: 12rem
+  font-size: 11rem
+  color: #ccc
+  margin-bottom: 1rem
+  @include tablet-only
+    font-size: 7rem
+    width: 8rem
+    height: 8rem
+  @include mobile
+    font-size: 5rem
+    width: 6rem
+    height: 6rem
+
+.team-table h1
+  @include desktop
+    font-size: 2rem
+  @include tablet
+    font-size: 2rem
+  @include mobile
+    font-size: 1.25rem
+
+.team-table .button
+  @include mobile
+    font-size: 0.75rem
+
+.team-table .media-content
+  overflow: hidden !important
+  padding-bottom: 1rem
+
+.parent-select input
+  display: none
+
+.parent-select label .icon
+  opacity: 0
+
+.parent-select input:checked + .icon
+  opacity: 1
+
+.parent-select
+  margin-top: 1rem
+
+.parent-select label
+  border: 2px solid black
+  padding: 0rem 0.2rem
+  background-color: white
+  color: $green
+  font-size: 1.25rem
+
+.parent-select label.disabled
+  border-color: #bbb
+
+.parent-select label.disabled + span
+  color: #bbb
+
+.parent-select > span
+  padding-left: 0.5rem
+
+.cubeball-tabs
+  @include desktop
+    padding-bottom: 2.5rem
+    padding-top: 1rem
+  @include touch
+    position: fixed
+    bottom: 0
+    width: 100%
+    height: 8rem
+    z-index: 100
+
+.cubeball-tabs li
+  @include desktop
+    width: 10rem
+    font-weight: bold
+    box-shadow: 0 1em 2em -0.125em rgb(0 0 0 / 99%), 0 0px 0 1px rgb(0 0 0 / 10%) !important
+    -webkit-box-shadow: 0 1em 2em -0.125em rgb(0 0 0 / 99%), 0 0px 0 1px rgb(0 0 0 / 10%) !important
+  @include mobile
+    -webkit-box-shadow: 0px 5px 15px 5px rgba(0,0,0,0.24)
+    box-shadow: 0px 5px 15px 5px rgba(0,0,0,0.24)
+
+.cubeball-tabs li:first-child
+  border-top-left-radius: 4000px
+  border-bottom-left-radius: 4000px
+
+.cubeball-tabs li:last-child
+  border-top-right-radius: 4000px
+  border-bottom-right-radius: 4000px
+
+.cubeball-tabs li a
+  background-color: white
+
+.cubeball-tabs
+  margin-top: 1.25rem
+
+.media
+  @include touch
+    display: block !important  
+
+.result .columns
+  @include mobile
+    margin-top: 1rem
+
+.result-team
+  display: grid
+  grid-template-columns: repeat(auto-fit, minmax(4rem, 1fr))
+  grid-gap: 1.25rem
+  justify-content: space-evenly
+
+.result .column:first-child, .result .column:last-child
+  display: flex
+  flex-direction: column
+  justify-content: center
+  padding-bottom: 2rem
+
+.result .child-cube
+  margin-left: auto
+  margin-right: auto
+  padding-bottom: 0
+  padding-top: 1rem
+  padding-left: 2rem
+  padding-right: 2rem
+
+.result .child-cube p
+  margin-bottom: 0.5rem
+
+.result .child-cube img
+  height: 12rem
+
+.result .child-cube i
+  font-size: 3rem
+
+.result .child-cube .icon
+  padding-top: 2rem !important
+  color: $primary
+
+.result .child-cube img, .result .game .win
+  filter: drop-shadow(0px 0px 16px $primary)
+
+.cubehead-mini
+  padding: 0.5rem 0.5rem
+  margin-bottom: 0
+  text-align: center
+  flex-grow: 0
+
+.cubehead-mini img
+
+.cubehead-mini h1
+  font-size: 0.75rem
+
+.score
+  margin-left: auto
+  margin-right: auto
+  text-align: center
+  margin-top: 1rem
+  margin-bottom: 0.5rem
+  background-color: rgba(80, 80, 80, 0.15)
+  display: inline-block
+  padding: 1rem 1rem
+  border-radius: 0.5rem
+
+.score span
+  background-color: #444
+  border-radius: 0.5rem
+  padding: 0.5rem 0.5rem
+  color: white
+  font-size: 1.5rem
+  font-weight: bold
+
+.score span:first-child
+  background-color: $blue
+  margin-right: 0.5rem
+
+.score span:last-child
+  background-color: $red
+  margin-left: 0.5rem
+
+.game
+  width: 100%
+  height: 16rem
+  margin-left: auto
+  margin-right: auto
+  border-radius: 1rem
+  margin-bottom: 0.75rem
+
+.game img
+  height: 16rem
+
+.gallery-filter select
+  width: 100%
+
+.gallery-filter
+  font-family: 'Orbitron', sans-serif !important
+  margin-top: 3rem
+  padding-top: 2rem
+
+.gallery-filter .reset
+  padding-top: 1rem
+
+html
+  background: rgb(230,236,236)
+  background-image: url("/img/cubebackground.png")
+  //background: linear-gradient(180deg, rgba(230,236,236,1) 0%, rgba(255,255,255,1) 100%) no-repeat center fixed
+  background-size: 25%
+  background-repeat: repeat
+
+.box
+  background-color: rgba(255, 255, 255, 0.95) !important
+  box-shadow: 0 2em 4em -0.125em rgb(0 0 0 / 95%), 0 0px 0 1px rgb(10 10 10 / 2%) !important
+
+.tag:not(body)
+  background-color: #e0edf3
+
+.footer
+  background-color: #445255
+  position: absolute
+  bottom: 0
+  width: 100%
+  z-index: -1
+
+.footer .logo
+  height: 6rem
+
+.footer .level
+  margin: 2rem 3rem
+
+.social-icons img
+  height: 2.5rem
+
+#page-container
+  position: relative
+  min-height: 100vh
+  padding-bottom: 14rem
+
+.footer .social-icons img
+  margin-left: 1rem
+
+.medium
+  padding: 0.25rem 0rem
+
+.discord
+  padding: 0.25rem 0rem
+
+.navbar.is-dark
+  background-color: black
+
+.back-breadcrumb
+  padding: 1rem 0rem
+
+.about h2
+  margin-bottom: 3rem
+
+.hero
+  background-color: #445255
+  background-image: url("/img/cubebackgroundlight.png")
+  background-size: 25%
+  background-repeat: repeat
+  //padding: 2rem 2rem
+  box-shadow: inset 0px 22px 16px -16px rgba(0, 0, 0, 0.2), inset 0px -22px 16px -16px rgba(0, 0, 0, 0.2)
+  //display: grid
+  //grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr))
+  //grid-gap: 2rem
+  max-height: 32rem
+  overflow: hidden
+  //border-bottom: 1px solid black
+  margin: 0rem -1.25rem
+  position: relative
+  margin-bottom: 1.5rem
+
+.hero img
+  filter: drop-shadow(0px 0px 14px rgba(128, 192, 240, 0.7))
+
+.hero2
+  background-image: url("/img/cubebackgroundgrey.png")
+  background-size: 25%
+  background-repeat: repeat
+  box-shadow: inset 0px 22px 16px -16px rgba(0, 0, 0, 0.9), inset 0px -22px 16px -16px rgba(0, 0, 0, 0.9)
+  margin: 0rem -1.25rem
+
+.hero4
+  background-image: url("/img/cubebackgroundpurple.png")
+  background-size: 25%
+  background-repeat: repeat
+  box-shadow: inset 0px 22px 16px -16px rgba(0, 0, 0, 0.2), inset 0px -22px 16px -16px rgba(0, 0, 0, 0.2)
+  margin: 0rem -1.25rem
+  @include desktop
+    height: 70rem
+  @include tablet-only
+    height: 57rem
+
+.hero4 h2
+  color: white
+
+.hero4 svg
+  width: 22rem
+  margin: 0 auto
+  @include tablet-only
+    width: 16rem
+
+.hero2 h2
+  color: white
+
+.hero2 .container, .hero3 .container
+  max-width: 678px
+
+.hero2 .icon
+  color: $green
+
+.hero3 .icon
+  color: $blue
+
+.hero2 .media, .hero3 .media
+  border: none
+
+.cubeheads-hero
+  background-image: url("/img/cubeheadsgridshadow.png")
+  background-size: 25%
+  height: 24rem
+  @include mobile
+    height: 12rem
+    background-size: 50%
+
+.column:nth-child(1) .roadmap-label
+  text-align: right
+  @include fullhd
+    margin-right: -2rem
+
+.column:nth-child(3) .roadmap-label
+  text-align: left
+  @include fullhd
+    margin-left: -2rem
+
+.column:nth-child(1) .roadmap-label:nth-child(1)
+  margin-top: 2.05rem
+  @include tablet-only
+    margin-top: 3.6rem
+
+.column:nth-child(3) .roadmap-label:nth-child(1)
+  margin-top: 14.3rem
+  @include tablet-only
+    margin-top: 12.5rem
+
+.roadmap-label
+  color: white
+  margin-top: 16.9rem
+  @include tablet-only
+    margin-top: 7.8rem
+    height: 10rem
+
+.roadmap-label p, .roadmap-label .is-size-6
+  @include tablet-only
+    font-size: 1rem
+
+.roadmap-label
+  @include mobile
+    margin: 1rem 0rem !important
+
+.roadmap > .icon
+  @include mobile
+    color: rgba(255, 255, 255, 0.5)
+
+.hero2 .content, .hero3 .content
+  @include touch
+    text-align: center
+
+.about .box
+  padding-bottom: 0px
+  margin-bottom: 2rem

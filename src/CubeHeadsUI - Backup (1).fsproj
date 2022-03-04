@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Global to the app -->
+    <Compile Include="Imports.fs" />
+    <Compile Include="ExampleCubehead.fs" />
+    <Compile Include="Common.fs" />
+    <Compile Include="Global.fs" />
+    <Compile Include="ViewComponents.fs" />
+    <!-- Info -->
+    <Compile Include="Info/View.fs" />
+    <!-- Counter -->
+    <Compile Include="Counter/Types.fs" />
+    <Compile Include="Counter/State.fs" />
+    <Compile Include="Counter/View.fs" />
+    <!-- Home -->
+    <Compile Include="Home/Types.fs" />
+
+    <Compile Include="Home/State.fs" />
+    <Compile Include="Home/View.fs" />
+    <Compile Include="Navbar\Types.fs" />
+    <!-- Cubeball -->
+    <Compile Include="Cubeball/Types.fs" />
+    <Compile Include="Cubeball/View.fs" />
+    <!-- Navbar -->
+    <Compile Include="Navbar/View.fs" />
+    <Compile Include="Types.fs" />
+    <!-- App -->
+    <Compile Include="State.fs" />
+    <Compile Include="App.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="index.html" />
+  </ItemGroup>
+  <Import Project="..\.paket\Paket.Restore.targets" />
+</Project>

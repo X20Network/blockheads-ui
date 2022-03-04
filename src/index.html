@@ -1,0 +1,44 @@
+<!doctype html>
+<html class="has-navbar-fixed-top">
+<head>
+  <title>Cubeheads</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" type="image/png" href="img/favicon-32x32.png" sizes="32x32" />
+  <link rel="shortcut icon" type="image/png" href="img/favicon-16x16.png" sizes="16x16" />
+  <script src="https://cdn.polyfill.io/v2/polyfill.js?features=es6"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css" />
+  <style>
+      .lds-dual-ring {
+          display: inline-block;
+          width: 80px;
+          height: 80px;
+      }
+
+          .lds-dual-ring:after {
+              content: " ";
+              display: block;
+              width: 64px;
+              height: 64px;
+              margin: 8px;
+              border-radius: 50%;
+              border: 6px solid #ccc;
+              border-color: #ccc transparent #ccc transparent;
+              animation: lds-dual-ring 1.2s linear infinite;
+          }
+
+      @keyframes lds-dual-ring {
+          0% {
+              transform: rotate(0deg);
+          }
+
+          100% {
+              transform: rotate(360deg);
+          }
+      }
+  </style>
+</head>
+<body>
+  <div id="elmish-app"></div>
+</body>
+</html>
