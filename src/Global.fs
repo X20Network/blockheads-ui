@@ -8,6 +8,7 @@ type Page =
     | Whitepaper
     | Cubehead of string
     | Gallery
+    | UserGuide
 
 let toHash page =
     match page with
@@ -17,4 +18,5 @@ let toHash page =
     | Cubeball -> "#cubeball"
     | Whitepaper -> "#whitepaper"
     | Gallery -> "#gallery"
+    | UserGuide -> "#guide"
     | Cubehead name -> "#" + name

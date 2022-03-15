@@ -7,6 +7,8 @@ open Fable.React.Props
 open Common
 open System.Globalization
 
+let emphasise s = span [ClassName "emphasis"] [str s]
+
 let elikely = 0.21
 let wvlikely = 0.18
 let wlikely = 0.14
@@ -88,12 +90,15 @@ let visualTraits vtraits =
     div [Class "field is-grouped is-grouped-multiline"] (vtraits |> List.map visualTrait)
 
 let cubeheadDetail cubehead =
+   let scoreStr = sprintf "%.1f%%" (System.Math.Round(cubehead.strategy.score * 100.0, 1))
    div [ClassName "content"]
        [h1 [] [str cubehead.name]
         p [] [b [] [str "Visual Traits"]]
         visualTraits cubehead.visualTraits
         p [] [b [] [str "Physical Traits"]]
         strengths cubehead
+        p [] [b [] [str "Cubeball Strategy Score"]]
+        p [ClassName "is-size-3 has-text-info"] [b [] [str scoreStr]]
         p [] [b [] [str "Cubeball Behavior Traits"]]
         p [ClassName "is-size-7"] [b [] [str "With the ball:"]]
         (strategy (withBallTags cubehead.strategy))

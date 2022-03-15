@@ -79,7 +79,8 @@ type ShootingStrategy =
 
 type Strategy =
     { weightings: Map<StrategyType, Map<StrategyWeighingType, float>>
-      shooting: ShootingStrategy }
+      shooting: ShootingStrategy
+      score: float }
 
 module Strategy =
 
@@ -155,7 +156,8 @@ module Cubehead =
              HeadDetail Mohawk
              MouthDetail SmileWithCigarette]
           strategy =
-            { shooting = match rnd.Next(2) with | 0 -> ShootAlways | 1 -> WaitForOpportunity
+            { score = rnd.NextDouble()
+              shooting = match rnd.Next(2) with | 0 -> ShootAlways | 1 -> WaitForOpportunity
               weightings =
                 [WithBallMove,
                     [DistanceGoal, rnd.Next(8)

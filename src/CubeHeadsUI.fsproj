@@ -31,6 +31,8 @@
     <Compile Include="Gallery/Types.fs" />
     <Compile Include="Gallery/State.fs" />
     <Compile Include="Gallery/View.fs" />
+    <!-- User Guide -->
+    <Compile Include="UserGuide/View.fs" />
     <!-- Navbar -->
     <Compile Include="Navbar/View.fs" />
     <Compile Include="Types.fs" />

@@ -18,6 +18,7 @@ let pageParser: Parser<Page->Page,Page> =
         map Home (s "home")
         map Cubeball (s "cubeball")
         map Gallery (s "gallery")
+        map UserGuide (s "guide")
         map Cubehead (str)
     ]
 

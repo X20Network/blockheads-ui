@@ -55,6 +55,7 @@ let root model dispatch =
     | Cubeball -> Cubeball.View.root model.cubeball model.accountData (CubeballMsg >> dispatch)
     | Cubehead _ -> Cubehead.View.root model.cubehead (CubeheadMsg >> dispatch)
     | Gallery -> Gallery.View.root model.gallery model.accountData (GalleryMsg >> dispatch)
+    | UserGuide -> UserGuide.View.root
 
   let containerCls page =
     match page with

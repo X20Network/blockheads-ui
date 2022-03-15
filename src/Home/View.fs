@@ -7,13 +7,15 @@ open Fable.React.Props
 open Types
 open Common
 open System.Globalization
+open ViewComponents
 
 let introTxt =
     ofList
         [h1 [ClassName "title"] [str "CUBEHEADS"]
          p [] [b [] [str "Welcome to the Cubeverse. Spacetime is now cubed."]]
-         p [] [str "Cubeheads are a limited collection of fully on-chain, gamified NFTs that push the limits of what is possible in an NFT smart contract."]
-         p [] [str "Each Cubehead can participate with 3 others in a team sport called Cubeball, where the on-chain emergent AI embedded inside each Cubehead NFT compete together for NFT trophies and the right to breed more Cubeheads (the Droneheads)."]]
+         p [] [str "Cubeheads are a limited collection of "; emphasise "fully on-chain"; str ", gamified NFTs that push the limits of what is possible in an NFT smart contract."]
+         p [] [str "Created from "; emphasise "custom 3D voxel artwork"; str " and rendered to SVG directly within the smart contract, they require no external storage or rendering engine."]
+         p [] [str "Each Cubehead can participate with 3 others in a team sport called Cubeball, where the "; emphasise "on-chain emergent AI "; str "embedded inside each Cubehead NFT compete together for NFT trophies and the right to breed more smaller Cubeheads called Cubelets."]]
 
 let intro =
     div [ClassName "columns"]
@@ -163,7 +165,7 @@ let root model accountData dispatch =
                 [section [ClassName "section content"]
                     [h1 [ClassName "title"] [str "Minting"]
                      p [] [b [] [str "Be part of the Cubeverse"]]
-                     p [] [str "Cubeheads are sold in batches of 6 every 8 hours. The price starts high and goes lower every second. Be quick - once they're gone, they're gone!"]]
+                     p [] [str "Cubeheads are sold in batches of 6 in a Dutch auction. The price will start high and gradually lower until they are all sold and then a new batch will be released. "; emphasise "There will only ever be 1995 Cubeheads so make sure to be quick!"]]
                  section [ClassName "auction-batch-imgs"]
                     [cubeheads model]
                  section [ClassName "section"]
