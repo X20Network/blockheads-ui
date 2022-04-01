@@ -10,10 +10,14 @@ type AuctionBatch =
     { auctions: Auction list
       timeRemaining: System.TimeSpan
       endTime: System.DateTime
-      price: decimal }
+      price: decimal
+      priceRaw: string }
 
 type Model =
     { currentAuction: AuctionBatch option }
 
 type Msg =
     | ChangeStr of string
+    | MintCubehead of int
+    | MintSuccess of obj
+    | MintFail of exn

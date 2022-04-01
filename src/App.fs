@@ -64,7 +64,7 @@ let root model dispatch =
 
   div
     []
-    [ Navbar.View.root (match model.accountData with | None -> None | Some data -> Some data.selectedAccount) (NavMsg >> dispatch)
+    [ Navbar.View.root model.accountData (NavMsg >> dispatch)
       div [Id "page-container"]
          [div [ClassName <| containerCls model.CurrentPage] [pageHtml model.CurrentPage ]
           footer [ClassName "footer"]
@@ -83,17 +83,22 @@ open Elmish.Debug
 open Elmish.HMR
 
 let gbl =
+    let web3 = new Web3(new Web3HttpProvider(Common.Config.network.infuraUrl))
     { web3Modal = web3Modal
-      window = window }
+      window = window
+      web3 = web3
+      cubeheadsMerkleTree = Common.buildCubeheadsMerkleTree web3 }
+
+window?path <- Common.getMerklePath gbl.cubeheadsMerkleTree 888
 
 let timer _ =
     Cmd.ofSub (fun dispatch ->
         JS.setInterval (fun () -> dispatch TimerTick) 1000 |> ignore)
 
 // App
-Program.mkProgram init (update gbl) root
+Program.mkProgram (init gbl) (update gbl) root
 |> Program.withSubscription timer
-|> Program.toNavigable (parseHash pageParser) urlUpdate
+|> Program.toNavigable (parsePath pageParser) urlUpdate
 #if DEBUG
 |> Program.withDebugger
 #endif

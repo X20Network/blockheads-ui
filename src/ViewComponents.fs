@@ -89,23 +89,25 @@ let visualTrait vtrait =
 let visualTraits vtraits =
     div [Class "field is-grouped is-grouped-multiline"] (vtraits |> List.map visualTrait)
 
-let cubeheadDetail cubehead =
-   let scoreStr = sprintf "%.1f%%" (System.Math.Round(cubehead.strategy.score * 100.0, 1))
-   div [ClassName "content"]
-       [h1 [] [str cubehead.name]
-        p [] [b [] [str "Visual Traits"]]
-        visualTraits cubehead.visualTraits
-        p [] [b [] [str "Physical Traits"]]
-        strengths cubehead
-        p [] [b [] [str "Cubeball Strategy Score"]]
-        p [ClassName "is-size-3 has-text-info"] [b [] [str scoreStr]]
-        p [] [b [] [str "Cubeball Behavior Traits"]]
-        p [ClassName "is-size-7"] [b [] [str "With the ball:"]]
-        (strategy (withBallTags cubehead.strategy))
-        p [ClassName "is-size-7"] [b [] [str "When Attacking:"]]
-        (strategy (attackTags cubehead.strategy))
-        p [ClassName "is-size-7"] [b [] [str "When Defending:"]]
-        (strategy (defendTags cubehead.strategy))]
+let cubeheadDetailCustomName cubehead name =
+    let scoreStr = sprintf "%.1f%%" (System.Math.Round(cubehead.strategy.score * 100.0, 1))
+    div [ClassName "content"]
+        [name
+         p [] [b [] [str "Visual Traits"]]
+         visualTraits cubehead.visualTraits
+         p [] [b [] [str "Physical Traits"]]
+         strengths cubehead
+         p [] [b [] [str "Cubeball Strategy Score"]]
+         p [ClassName "is-size-3 has-text-info"] [b [] [str scoreStr]]
+         p [] [b [] [str "Cubeball Behavior Traits"]]
+         p [ClassName "is-size-7"] [b [] [str "With the ball:"]]
+         (strategy (withBallTags cubehead.strategy))
+         p [ClassName "is-size-7"] [b [] [str "When Attacking:"]]
+         (strategy (attackTags cubehead.strategy))
+         p [ClassName "is-size-7"] [b [] [str "When Defending:"]]
+         (strategy (defendTags cubehead.strategy))]
+
+let cubeheadDetail cubehead = cubeheadDetailCustomName cubehead (h1 [] [str cubehead.name])
 
 type CubeheadCompactComponent(initialProps) =
     inherit PureStatelessComponent<KeyedItem<Cubehead>>(initialProps)
@@ -113,10 +115,9 @@ type CubeheadCompactComponent(initialProps) =
     override this.render() =
         let image = JS.encodeURIComponent this.props.Item.svg
         //let imageSrc = """data:image/svg+xml, """ + image
-        let imageIndex = this.props.Item.index % 305
-        let imageSrc = "/img/cubeheads/cubehead (" + imageIndex.ToString() + ").png"
+        let imageSrc = this.props.Item.svg
         article [ClassName "box cubehead-tile"]
-            [a [Href <| "#cubehead" + this.props.Item.index.ToString()] [img [Src imageSrc]]
+            [a [Href <| "cubehead/" + this.props.Item.index.ToString()] [img [Src imageSrc]]
              h1 [] [str this.props.Item.name]]
 
 let cubeheadsCompact cubehead dispatch =
@@ -125,10 +126,9 @@ let cubeheadsCompact cubehead dispatch =
 let cubeheadsMini cubehead dispatch =
     let image = JS.encodeURIComponent cubehead.svg
     let imageSrc = ("""data:image/svg+xml, """ + image)
-    let imageIndex = cubehead.index % 305
-    let imageSrc = "/img/cubeheads/cubehead (" + imageIndex.ToString() + ").png"
+    let imageSrc = cubehead.svg
     article [ClassName "cubehead-mini"]
-        [a [Href <| "#cubehead" + cubehead.index.ToString()] [img [Style []; Src imageSrc ]]
+        [a [Href <| "cubehead/" + cubehead.index.ToString()] [img [Style []; Src imageSrc ]]
          h1 [] [str cubehead.name]]
 
 let cubeheadsGrid cubeheadElements =

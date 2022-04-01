@@ -4,6 +4,7 @@ open Fable.React
 open Fable.React.Props
 open Types
 open Global
+open Common
 
 let navButton name =
     a [ClassName "navbar-item"] [str name]
@@ -22,6 +23,11 @@ let connectedAccount (selectedAccount :string) =
         [span [ClassName "tag is-info is-medium"]
             [str (selectedAccount.Substring(0, 4).ToUpper() + "..." + selectedAccount.Substring(12, 4).ToUpper())]]
 
+let wrongChain =
+    div [ClassName "navbar-item"]
+        [span [ClassName "tag is-danger is-medium"]
+            [span [ClassName "icon"] [i [ClassName "mdi mdi-alert-outline"] []]; span [] [str <| "Connect to " + Common.Config.network.chainName]]]
+
 let root model dispatch =
     nav
         [ ClassName "navbar is-dark is-fixed-top" ]
@@ -35,7 +41,8 @@ let root model dispatch =
                   div [ClassName "is-hidden-desktop"]
                     [match model with
                      | None -> connectButton dispatch
-                     | Some selectedAccount -> connectedAccount selectedAccount]
+                     | Some { chainId = chainId } when chainId <> Config.network.chainId -> wrongChain
+                     | Some accountData -> connectedAccount accountData.selectedAccount]
                   a
                     [ ClassName "navbar-burger"; AriaLabel "Menu"; Role "button"; AriaExpanded false; HTMLAttr.Custom("data-target", "navbarMenu") ]
                     [ span [AriaHidden true] []
@@ -68,4 +75,5 @@ let root model dispatch =
                          span [] [b [] [str "Cubeball"]]]
                      match model with
                      | None -> connectButton dispatch
-                     | Some selectedAccount -> connectedAccount selectedAccount] ] ] ]
+                     | Some { chainId = chainId } when chainId <> Common.Config.network.chainId -> wrongChain
+                     | Some accountData -> connectedAccount accountData.selectedAccount ] ] ] ]

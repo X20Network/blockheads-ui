@@ -4,13 +4,13 @@ open Global
 open Imports
 open Common
 
-type AccountData =
-    { selectedAccount: string }
-
 type WalletData =
     { cubeheads: WalletCubehead[]
       team: (int * bool)[]
       results: WalletResult list }
+
+type Web3InitData =
+    { auction: Home.Types.AuctionBatch }
 
 type Msg =
     | CounterMsg of Counter.Types.Msg
@@ -22,11 +22,15 @@ type Msg =
     | SetProvider of obj
     | SetAccountData of AccountData
     | SetWalletData of WalletData
+    | SetWeb3InitData of Web3InitData
+    | SetAuctionPrice of string * decimal
     | TimerTick
 
 type GlobalObjs =
     { web3Modal: Web3Modal
-      window: obj }
+      window: obj
+      mutable web3: Web3
+      cubeheadsMerkleTree: string[][] }
 
 type Model =
     { CurrentPage: Page

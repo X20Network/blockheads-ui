@@ -17,10 +17,11 @@ let exampleAuction =
           { cubehead = getRndCubehead rnd; priceSold = if rnd.Next(2) = 0 then None else Some 0.3M } ]
       endTime = endTime
       timeRemaining = endTime - now
-      price = 1.0M }
+      price = 1.0M
+      priceRaw = ""}
 
 let init () : Model * Cmd<Msg> =
-  { currentAuction = Some exampleAuction }, []
+  { currentAuction = None }, []
 
 let update msg model : Model * Cmd<Msg> =
     match msg with

@@ -93,35 +93,40 @@ let visualTrait vtrait =
 let visualTraits vtraits =
     div [Class "field is-grouped is-grouped-multiline"] (vtraits |> List.map visualTrait)
 
-let buyButton accountData auctionBatch auction =
+let buyButton accountData auctionBatch auction dispatch =
     match accountData with
     | None ->
         a [ClassName "button is-primary"; Disabled true] [str "Connect Account"]
     | Some _ ->
-        match auction.priceSold with
-        | None ->
-            a [ClassName "button is-primary"] [
-                b[] [str "Buy for 0.2 ETH"]]
-        | Some price ->
+        match auction.priceSold, auctionBatch with
+        | None, Some auctionBatch ->
+            let price = sprintf "%.4f" auctionBatch.price 
+            a [ClassName "button is-primary"; OnClick (fun _ -> dispatch <| MintCubehead auction.cubehead.index)] [
+                b[] [str ("Buy for " + price + " ETH")]]
+        | Some price, _ ->
             a [ClassName "button"; Disabled true] [
-                b[] [str <| sprintf "Sold for %M ETH" price]]
+                b[] [str <| sprintf "Sold"]]
 
-let auctionView accountData auctionBatch (auction :Auction) =
+let auctionView accountData auctionBatch dispatch (auction :Auction) =
     let image = JS.encodeURIComponent auction.cubehead.svg
     let imageSrc = """data:image/svg+xml, """ + image
     let imageIndex = auction.cubehead.index % 305
-    let imageSrc = "/img/cubeheads/cubehead (" + imageIndex.ToString() + ").png"
+    let imageSrc = auction.cubehead.svg
+    let name =
+        match auction.priceSold with
+        | Some _ -> h1 [] [span [Style [TextDecoration "line-through"]] [str auction.cubehead.name]; str " - "; span [ClassName "has-text-danger"] [str "SOLD"]]
+        | None -> h1 [] [str auction.cubehead.name]
     article [ClassName "media auction-cubehead"]
         [figure [ClassName "media-left"]
             [img [Src imageSrc]]
          div [ClassName "media-content"]
             [div [ClassName "content"]
-                [div [ClassName "mb4"] [ViewComponents.cubeheadDetail auction.cubehead]
+                [div [ClassName "mb4"] [ViewComponents.cubeheadDetailCustomName auction.cubehead name]
                  nav [ClassName "level"]
                      [div [ClassName "level-left"] []
                       div [ClassName "level-right"]
                          [div [ClassName "level-item"]
-                            [buyButton accountData auctionBatch auction]]]]]]
+                            [buyButton accountData auctionBatch auction dispatch]]]]]]
 
 
 let auctions model =
@@ -135,12 +140,13 @@ let auctions model =
         let hours = int <| auction.timeRemaining.TotalHours
         let mins = int <| auction.timeRemaining.TotalMinutes
         let secs = int <| auction.timeRemaining.Seconds
+        let price = sprintf "%.4f" auction.price 
         div []
             [nav [ClassName "level auction-countdown"]
                 [div [ClassName "level-item has-text-centered"]
                     [div [] 
                         [p [ClassName "heading"] [str "Current Price (ETH)"]
-                         h1 [ClassName "title"] [str "0.2"]]]
+                         h1 [ClassName "title"] [str price]]]
                  div [ClassName "level-item has-text-centered"]
                     [div []
                         [p [ClassName "heading"] [str "Time Remaining"]
@@ -153,7 +159,7 @@ let cubeheads model =
         nav [ClassName "level is-hidden-mobile"]
             (auction.auctions |> List.map (fun auction ->
                 let imageIndex = auction.cubehead.index % 305
-                let imageSrc = "/img/cubeheads/cubehead (" + imageIndex.ToString() + ").png"
+                let imageSrc = auction.cubehead.svg
                 div [ClassName "level-item"] [img [Src imageSrc]]))
 
 let root model accountData dispatch =
@@ -171,7 +177,7 @@ let root model accountData dispatch =
                  section [ClassName "section"]
                     [auctions model]
                  ofOption (model.currentAuction |> Option.map (fun auction ->
-                 section [ClassName "section"] (auction.auctions |> List.map (auctionView accountData model.currentAuction))))]]]
+                 section [ClassName "section"] (auction.auctions |> List.map (auctionView accountData model.currentAuction dispatch))))]]]
 
 let root2 model dispatch =
   div

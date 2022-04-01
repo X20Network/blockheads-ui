@@ -13,8 +13,7 @@ let root (model :Model option) dispatch =
     | None -> div [] [str "Cubehead not found"]
     | Some cubehead ->
         let image = """data:image/svg+xml, """ + JS.encodeURIComponent cubehead.cubehead.svg
-        let imageIndex = cubehead.cubehead.index % 305
-        let image = "/img/cubeheads/cubehead (" + imageIndex.ToString() + ").png"
+        let image = cubehead.cubehead.svg
         let breadCrumb =
             match cubehead.previousPage with
             | None -> ofOption None
