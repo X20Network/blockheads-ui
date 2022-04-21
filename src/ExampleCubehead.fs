@@ -1,6 +1,6 @@
 module ExampleCubehead
 
-let svg =
+let svg3 =
     """<svg width='600' height='600' viewBox='4436371 5550000 3200000 3200000' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>
 <use xlink:href='#v-0x00000137-1' transform='translate(983738,3600000)'/>
 <use xlink:href='#v-0x00000137-1' transform='translate(1070341,3650000)'/>

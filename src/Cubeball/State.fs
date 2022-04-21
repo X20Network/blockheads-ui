@@ -3,6 +3,7 @@ module Cubeball.State
 open Elmish
 open Types
 open Fable.Core
+open Common
 
 let update msg model : Model * Cmd<Msg> =
     match msg with
@@ -17,9 +18,6 @@ let update msg model : Model * Cmd<Msg> =
         { model with draftTeam = draftTeam; selectingCubehead = None }, Cmd.none
     | CancelTeamChanges ->
         { model with draftTeam = [| None; None; None; None |] }, Cmd.none
-    | SaveTeamChanges ->
-        { model with saving = true },
-            Cmd.ofSub (fun dispatch -> JS.setTimeout(fun _ -> dispatch SaveSucceeded) 4000 |> ignore)
     | SaveSucceeded ->
         { model with
             saving = false
@@ -28,6 +26,9 @@ let update msg model : Model * Cmd<Msg> =
                 | None | Some [||] -> model.draftTeam |> Array.choose id |> Some
                 | Some team -> Array.zip team model.draftTeam |> Array.map (function | (_, Some (i, c)) -> (i, c) | c, _ -> c) |> Some
             draftTeam = [| None; None; None; None |]}, Cmd.none
+    | CommitTeamFailed e ->
+        Browser.Dom.console.log("error committing team: " + e.Message)
+        { model with saving = false }, Cmd.none
     | SetCaptainState (pos, captain) ->
         match model.team, model.draftTeam.[pos] with
         | _, Some _ ->

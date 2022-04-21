@@ -25,6 +25,13 @@ let notEnoughCubeheadsNotification =
     div [ClassName "notification has-text-centered"]
         [h2 [] [b [] [str "You need at least four Cubeheads or Dronecubes to form a team, including at least one Cubehead"]]]
 
+let signMsgNotification dispatch =
+    div [ClassName "notification"]
+        [h2 [] [b [] [str "You need to prove your account ownership before we can fetch your team. Click the button below to sign a message that will prove ownership."]]
+         div [ClassName "has-text-centered pt4"]
+            [button [ClassName "button"; OnClick (fun _ -> dispatch SignMessage)]
+                [span [ClassName "icon"] [i [ClassName "mdi mdi-file-sign"] []]; b [] [str "Sign Message"]]]]
+
 let teamPositions position =
     let getCls pos = if pos = position then "team-position active" else "team-position"
     table [ClassName "team-diagram"]
@@ -44,6 +51,8 @@ let teamPositions position =
          tr [] [td [ColSpan 3; ClassName "is-size-7"] [i [] [b [] [str "Defending"]]]]]
 
 let team model dispatch =
+    let getCubeheadByIndex i =
+        (model.cubeheads.Value |> Array.find (fun c -> c.cubehead.index = i)).cubehead
     let nteam =
         match model.team with
         | None | Some [||] ->
@@ -80,11 +89,11 @@ let team model dispatch =
             | Some [||], None ->
                 h1 [ClassName "has-text-grey-light"] [i [] [str "No Cubehead Selected"]]
             | _, Some (ci, _) ->
-                let cubehead = model.cubeheads.Value.[ci]
-                h1 [] [str cubehead.cubehead.name]
+                let cubehead = getCubeheadByIndex ci
+                h1 [] [str cubehead.name]
             | Some t, None ->
-                let cubehead = model.cubeheads.Value.[t.[n] |> fst]
-                h1 [] [str cubehead.cubehead.name]
+                let cubehead = getCubeheadByIndex (t.[n] |> fst)
+                h1 [] [str cubehead.name]
         let parentSelect =
             let ps checked disableUnchecked =
                 div [ClassName "parent-select"]
@@ -105,16 +114,12 @@ let team model dispatch =
             | Some [||], None ->
                 span [ClassName "icon cubehead-not-selected"] [i [ClassName "mdi mdi-cube-off-outline"] []]
             | _, Some (ci, _) ->
-                let cubehead = model.cubeheads.Value.[ci]
-                let image = """data:image/svg+xml, """ + JS.encodeURIComponent cubehead.cubehead.svg
-                let imageIndex = cubehead.cubehead.index % 305
-                let image = "/img/cubeheads/cubehead (" + imageIndex.ToString() + ").png"
+                let cubehead = getCubeheadByIndex ci
+                let image = cubehead.svg
                 img [Src (image)]
             | Some t, None ->
-                let cubehead = model.cubeheads.Value.[t.[n] |> fst]
-                let image = """data:image/svg+xml, """ + JS.encodeURIComponent cubehead.cubehead.svg
-                let imageIndex = cubehead.cubehead.index % 305
-                let image = "/img/cubeheads/cubehead (" + imageIndex.ToString() + ").png"
+                let cubehead = getCubeheadByIndex (t.[n] |> fst)
+                let image = cubehead.svg
                 img [Src (image)]
         match model.team with
         | Some _ ->
@@ -149,14 +154,22 @@ let results model accountData dispatch =
         | Some results ->
             results |> List.map (fun result ->
                 let resultTxt, resultCls =
-                    match result.score with
-                    | (a, b) when a > b -> "WIN", "has-text-success"
-                    | (a, b) when a < b -> "LOSE", "has-text-danger"
+                    match result.score, result.userTeamColour with
+                    | (a, b), Blue when a > b -> "WIN", "has-text-success"
+                    | (a, b), Blue when a < b -> "LOSE", "has-text-danger"
+                    | (a, b), Red when b > a -> "WIN", "has-text-success"
+                    | (a, b), Red when b < a -> "LOSE", "has-text-danger"
                     | _ -> "DRAW", "has-text-dark"
                 let dateTxt = result.date.ToLongDateString()
+                let redColour = Cubehead.getTrophyColour result.trophyType Red
+                let blueColour = Cubehead.getTrophyColour result.trophyType Blue
+                let redTeam = if result.userTeamColour = Red then result.userTeam else result.oppTeam
+                let blueTeam = if result.userTeamColour = Blue then result.userTeam else result.oppTeam
+                let redteamName = if result.userTeamColour = Red then "YOUR TEAM" else "OPPOSITION TEAM"
+                let blueTeamName = if result.userTeamColour = Blue then "YOUR TEAM" else "OPPOSITION TEAM"
                 let child =
-                    match result.score with
-                    | (x, y) when x > y ->
+                    match resultTxt with
+                    | "WIN" ->
                        [div [ClassName "child-cube"]
                            [div [ClassName "has-text-centered"] [span [ClassName "icon"] [i [ClassName "mdi mdi-arrow-down-bold-hexagon-outline"] []]]
                             ViewComponents.cubeheadsMini result.childCube dispatch]]
@@ -167,18 +180,18 @@ let results model accountData dispatch =
                      h2 [] [b [] [str dateTxt]]
                      div [ClassName "columns"]
                         [div [ClassName "column is-4"]
-                            [div [ClassName "has-text-centered"] [b [] [str "YOUR TEAM"]]
-                             div [ClassName "result-team"] (result.userTeam |> Array.map (fun c -> ViewComponents.cubeheadsMini c dispatch) |> Array.toList)
+                            [div [ClassName "has-text-centered mb4"] [b [Style [BackgroundColor blueColour; BorderRadius "0.5rem"; Padding "0 0.5rem"; Color "white"]] [str blueTeamName]]
+                             div [ClassName "result-team"] (blueTeam |> Array.map (fun c -> ViewComponents.cubeheadsMini c dispatch) |> Array.toList)
                              ]
                          div [ClassName "column is-4 has-text-centered"]
                             [div [ClassName "game"]
                                 [img [ClassName (match result.score with | (x, y) when x > y -> "win" | _ -> ""); Src result.trophySrc]]
                              div [ClassName "score"]
-                                [div [] [span [] [str <| (fst result.score).ToString()]; span [] [str <| (snd result.score).ToString()]]]
+                                [div [] [span [Style [BackgroundColor blueColour]] [str <| (fst result.score).ToString()]; span [Style [BackgroundColor redColour]] [str <| (snd result.score).ToString()]]]
                              child]
                          div [ClassName "column is-4"]
-                            [div [ClassName "has-text-centered"] [b [] [str "OPPOSITION TEAM"]]
-                             div [ClassName "result-team"] (result.oppTeam |> Array.map (fun c -> ViewComponents.cubeheadsMini c dispatch) |> Array.toList)]]
+                            [div [ClassName "has-text-centered mb4"] [b [Style [BackgroundColor redColour; BorderRadius "0.5rem"; Padding "0 0.5rem"; Color "white"]] [str redteamName]]
+                             div [ClassName "result-team"] (redTeam |> Array.map (fun c -> ViewComponents.cubeheadsMini c dispatch) |> Array.toList)]]
                      ]) |> ofList
 
 let cubeheadsTab model accountData dispatch =
@@ -203,15 +216,21 @@ let teamTab model accountData dispatch =
         | false -> ofOption None
     match accountData with
     | None -> connectNotification
+    | Some { signedMessage = None } ->
+        signMsgNotification dispatch
     | Some _ ->
-        match model.cubeheads with
+        match model.team with
         | None -> loadingNotification
-        | Some [||] -> noCubeheadsNotification
-        | Some x when x.Length < 4 -> notEnoughCubeheadsNotification
-        | _ ->
-            div []
-                [savingTxt
-                 team model dispatch]
+        | Some _ ->
+            match model.cubeheads with
+            | None -> loadingNotification
+            | Some [||] -> noCubeheadsNotification
+            | Some x when x.Length < 4 -> notEnoughCubeheadsNotification
+            | Some _ ->
+                div [] 
+                    [savingTxt
+                     team model dispatch]
+            
 
 let resultsTab model accountData dispatch =
     match accountData with
@@ -242,12 +261,9 @@ let selectCubehead n model accountData dispatch =
                              span [Style [MarginLeft "1rem"]] [b [] [str <| "Select for Pos " + (n + 1).ToString()]]]
                         div [] (cubeheads
                             |> Array.toList
-                            |> List.mapi (fun ci wc -> (ci, wc))
-                            |> List.filter (fun (ci, _) -> not (alreadyIncluded |> Array.contains (ci)))
-                            |> List.map (fun (ci, wc) ->
-                        let image = """data:image/svg+xml, """ + JS.encodeURIComponent wc.cubehead.svg
-                        let imageIndex = wc.cubehead.index % 305
-                        let image = "/img/cubeheads/cubehead (" + imageIndex.ToString() + ").png"
+                            |> List.filter (fun wc-> not (alreadyIncluded |> Array.contains (wc.cubehead.index)))
+                            |> List.map (fun wc ->
+                        let image = wc.cubehead.svg
                         article [ClassName "media"]
                             [figure [ClassName "media-left"]
                                 [img [Style [Height "12rem"; Width "12rem"]; Src (image)]]
@@ -260,7 +276,7 @@ let selectCubehead n model accountData dispatch =
                                              [div [ClassName "level-item"]
                                                 [button
                                                     [Disabled model.saving
-                                                     OnClick (fun _ -> dispatch <| SelectCubehead (n, ci)); ClassName "button is-primary"]
+                                                     OnClick (fun _ -> dispatch <| SelectCubehead (n, wc.cubehead.index)); ClassName "button is-primary"]
                                                         [b [] [str <| "Select"]]]]]]]]))]]]
 
 let root model accountData dispatch =

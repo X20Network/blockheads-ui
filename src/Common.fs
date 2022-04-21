@@ -11,6 +11,13 @@ type ChainConfig =
       moralisApiKey: string
       cubeheadsContractAddress: string}
 
+type Contracts =
+    { cubeheadsContract: obj
+      cubemintingContract: obj
+      cubeletsContract: obj
+      cubeballContract: obj
+      cubetrophiesContract: obj }
+
 module Config =
 
     let private kovan =
@@ -19,7 +26,7 @@ module Config =
         chainName = "Kovan"
         moralisChainName = "kovan"
         moralisApiKey = "jpdexOGpbd1eIulwVUTz5Y1LB1dJow8ApkDhv6YukusfUIFLmVfCzagT4Dv8buWg"
-        cubeheadsContractAddress = "0x87007Dde4fa46733c21c7889Fc31ddf8921c2C56" }
+        cubeheadsContractAddress = "0xeAb25936bEC5C507eA2aD28014C5Cbf591D0A81F" }
 
     let network = kovan
 
@@ -41,21 +48,158 @@ module Moralis =
           token_uri: string
           symbol: string }
 
-    let getNFTs tokenAddress account :PagedResult<NFT> Async =
+    let getNFTs tokenAddress account =
         let url = sprintf "https://deep-index.moralis.io/api/v2/%s/nft?chain=kovan&format=decimal&token_addresses=%s" account tokenAddress
+        let rec getNFTs cursor =
+            let url =
+                match cursor with
+                | Some cursor ->
+                    url + "&cursor=" + cursor
+                | None -> url
+            async {
+                let! response =
+                    Http.request url
+                        |> Http.method GET
+                        |> Http.header (Headers.accept "application/json")
+                        |> Http.header (Headers.create "X-API-Key" Config.network.moralisApiKey)
+                        |> Http.send
+                let nfts :PagedResult<NFT> = Json.parseAs response.responseText
+                if nfts.total = nfts.result.Length then
+                    return nfts.result
+                else
+                    let! rest = getNFTs (Some nfts.cursor)
+                    return Array.append nfts.result rest
+            }
+        getNFTs None
+
+module Server =
+
+    open Fable.SimpleHttp
+    open Fable.SimpleJson
+
+    type TokenCache =
+        { date: System.DateTime
+          user: string
+          tokenIndex: int
+          tokenUri: string }
+
+    type Nft =
+        { index: int
+          tokenUri: string
+          name: string }
+
+    type Team =
+        { date: System.DateTime
+          account: string
+          team: int[]
+          teamHash: string
+          salt: string }
+
+    type Result =
+        { userB: string
+          userR: string
+          scoreB: int
+          scoreR: int
+          teamB: int[]
+          teamR: int[]
+          trophyIndex: int
+          cubeletIndex: int
+          date: System.DateTime }
+
+    let private baseUrl = "https://cubeheadsserver.azurewebsites.net/api/"
+
+    let getResults account =
+        let url = sprintf "%s/results?account=%s" baseUrl account
         async {
-            let! response =
-                Http.request url
-                    |> Http.method GET
-                    |> Http.header (Headers.accept "application/json")
-                    |> Http.header (Headers.create "X-API-Key" Config.network.moralisApiKey)
-                    |> Http.send
-            return Json.parseAs response.responseText
+            let! statusCode, responseTxt = Http.get url
+            match statusCode with
+            | 200 ->
+                let results :Result[] = Json.parseAs responseTxt
+                return results
+            | _ -> return failwith <| "an error occurred fetching results: " + responseTxt
+        }
+
+    let getTeam (signedMessage, account) =
+        let url = sprintf "%s/team?message=%s&account=%s" baseUrl signedMessage account
+        async {
+            let! statusCode, responseTxt = Http.get url
+            match statusCode with
+            | 200 ->
+                let team :Team = Json.parseAs responseTxt
+                if team.team.Length >= 6 then
+                    return team.team |> Array.take 4 |> Array.mapi (fun i ci -> ci, team.team.[4] = i || team.team.[5] = i)
+                else return [||]
+            | 404 -> return [||]
+            | _ ->
+                return failwith <| "an error occurred fetching team: " + responseTxt
+        }
+
+    let getTrophies account =
+        let url = sprintf "%s/trophies?account=%s" baseUrl account
+        async {
+            let! statusCode, responseTxt = Http.get url
+            match statusCode with
+            | 200 ->
+                let results :TokenCache[] = Json.parseAs responseTxt
+                return results
+            | _ -> return failwith <| "an error occurred fetching results: " + responseTxt
+        }
+
+    let getCubelets account =
+        let url = sprintf "%s/cubelets?account=%s" baseUrl account
+        async {
+            let! statusCode, responseTxt = Http.get url
+            match statusCode with
+            | 200 ->
+                let results :TokenCache[] = Json.parseAs responseTxt
+                return results
+            | _ -> return failwith <| "an error occurred fetching results: " + responseTxt
+        }
+
+    let getTrophy index :Async<Nft option> =
+        let url = sprintf "%s/trophy?index=%i" baseUrl index
+        async {
+            let! statusCode, responseTxt = Http.get url
+            match statusCode with
+            | 200 ->
+                let result :obj = Json.parseAs responseTxt
+                if result = null then return None else return Some !!result
+            | _ -> return failwith <| "an error occurred fetching results: " + responseTxt
+        }
+
+    let getCubelet index :Async<Nft option> =
+        let url = sprintf "%s/cubelet?index=%i" baseUrl index
+        async {
+            let! statusCode, responseTxt = Http.get url
+            match statusCode with
+            | 200 ->
+                let result :obj = Json.parseAs responseTxt
+                if result = null then return None else return Some !!result
+            | _ -> return failwith <| "an error occurred fetching results: " + responseTxt
+        }
+
+    let getAuthenticationMessage account =
+        let url = sprintf "%s/authenticationMessage?account=%s" baseUrl account
+        async {
+            let! statusCode, responseTxt = Http.get url
+            match statusCode with
+            | 200 -> return responseTxt
+            | _ -> return failwith <| "an error occurred fetching authentication message: " + responseTxt
+        }
+
+    let saveTeam signedMessage account (team :Team) =
+        let url = sprintf "%s/team?message=%s&account=%s" baseUrl signedMessage account
+        async {
+            let! statusCode, responseTxt = Http.post url (Json.stringify team)
+            match statusCode with
+            | 200 -> return ()
+            | _ -> return failwith <| "an error occurred saving team: " + responseTxt
         }
 
 type AccountData =
     { selectedAccount: string
-      chainId: int }
+      chainId: int
+      signedMessage: string option }
 
 type CubeheadAttribute =
     { trait_type: string
@@ -66,7 +210,8 @@ type CubeheadData =
       description: string
       external_url: string
       attributes: CubeheadAttribute[]
-      data: string }
+      data: string
+      image: string }
 
 let cubeheadsData : CubeheadData[] = import "cubeheads" "./data.js"
 
@@ -81,7 +226,7 @@ let buildCubeheadsMerkleTree web3 =
     let cubeheads =
         cubeheadsData |> Array.choose (fun c ->
            let index = c.name.Substring(10) |> System.Int32.Parse
-           if index > 1994 then None
+           if index > 1991 then None
            else Some (index, c.data))
            |> Array.sortBy fst
            |> Array.map snd
@@ -235,9 +380,15 @@ type WalletCubehead =
     { cubehead: Cubehead
       teamStatus: TeamStatus }
 
+type TeamColour =
+    | Blue
+    | Red
+
 type WalletResult =
     { userTeam: Cubehead[]
       oppTeam: Cubehead[]
+      userTeamColour: TeamColour
+      trophyType: string
       score: int * int
       date: date
       childCube: Cubehead
@@ -246,11 +397,28 @@ type WalletResult =
 module Cubehead =
 
     open System
+    open Fable.SimpleHttp
+
+    let getTrophyColour trophyType teamColour =
+        match trophyType, teamColour with
+        | "Ice", Blue -> "#0C1DA3"
+        | "Ice", Red -> "#FF4B14"
+        | "Nature", Blue -> "#248DCA"
+        | "Nature", Red -> "#A81717"
+        | "Sand", Blue -> "#21449C"
+        | "Sand", Red -> "#8B1114"
+        | "Urban", Blue -> "#3B6ED4"
+        | "Urban", Red -> "#E70808"
+        | "Night", Blue -> "#78C5E2"
+        | "Night", Red -> "#FF5B9A"
+        | "Pink", Blue -> "#59C0EC"
+        | "Pink", Red -> "#F84B06"
 
     let fromCubeheadData (data :CubeheadData) =
         let i = parseHex (data.data.Substring(50, 16))
+        let index = let start = data.name.IndexOf('#') in data.name.Substring(start + 1) |> System.Int32.Parse
         { name = data.name
-          index = data.name.Substring(10) |> System.Int32.Parse
+          index = index
           visualTraits =
             data.attributes
                 |> Array.map (fun a -> a.trait_type, a.value)
@@ -267,54 +435,54 @@ module Cubehead =
           speed = (i >>> 2) &&& 3
           agility = (i >>> 4) &&& 3
           accuracy = (i >>> 6) &&& 3
-          svg = "/img/cubehead-svgs/" + data.data.Substring(24, 10).ToUpper() + ".svg" }
+          svg = if index >= 65536 then data.image else "/img/cubehead-svgs/" + data.data.Substring(24, 10).ToUpper() + ".svg" }
 
-    let getRndCubehead (rnd :Random) =
-        let index = rnd.Next(1998)
-        { svg = ExampleCubehead.svg
-          name = sprintf "Cubehead #%i"index
-          index = index
-          visualTraits =
-            traits |> Map.toList |> List.map (fun (trait, values) ->
-                let vs = values |> Map.toArray
-                let v, _ = vs.[rnd.Next(vs.Length)]
-                trait, v)
-          strategy =
-            { score = rnd.NextDouble()
-              shooting = match rnd.Next(2) with | 0 -> ShootAlways | 1 -> WaitForOpportunity
-              weightings =
-                [WithBallMove,
-                    [DistanceGoal, rnd.Next(8)
-                     NumAttackers, rnd.Next(8)
-                     NumDefenders, rnd.Next(8)] |> Map.ofList
-                 WithBallPass,
-                    [DistanceGoal, rnd.Next(8)
-                     NumAttackers, rnd.Next(8)
-                     NumDefenders, rnd.Next(8)
-                     InvPossStrength, rnd.Next(8)
-                     InvPassStrength, rnd.Next(8)
-                     PassNotRequested, rnd.Next(8)] |> Map.ofList
-                 InPoss,
-                    [DistanceGoal, rnd.Next(4)
-                     DistanceBall, rnd.Next(4)
-                     NumAttackers, rnd.Next(4)
-                     NumDefenders, rnd.Next(4)] |> Map.ofList
-                 OutPoss,
-                    [DistanceGoal, rnd.Next(4)
-                     DistanceBall, rnd.Next(4)
-                     NumAttackers, rnd.Next(4)
-                     NumDefenders, rnd.Next(4)] |> Map.ofList]
-                    |> Map.ofList |> Strategy.getNormalised }
-          strength = rnd.Next(4)
-          speed = rnd.Next(4)
-          agility = rnd.Next(4)
-          accuracy = rnd.Next(4) }
+    //let getRndCubehead (rnd :Random) =
+    //    let index = rnd.Next(1998)
+    //    { svg = ExampleCubehead.svg
+    //      name = sprintf "Cubehead #%i"index
+    //      index = index
+    //      visualTraits =
+    //        traits |> Map.toList |> List.map (fun (trait, values) ->
+    //            let vs = values |> Map.toArray
+    //            let v, _ = vs.[rnd.Next(vs.Length)]
+    //            trait, v)
+    //      strategy =
+    //        { score = rnd.NextDouble()
+    //          shooting = match rnd.Next(2) with | 0 -> ShootAlways | 1 -> WaitForOpportunity
+    //          weightings =
+    //            [WithBallMove,
+    //                [DistanceGoal, rnd.Next(8)
+    //                 NumAttackers, rnd.Next(8)
+    //                 NumDefenders, rnd.Next(8)] |> Map.ofList
+    //             WithBallPass,
+    //                [DistanceGoal, rnd.Next(8)
+    //                 NumAttackers, rnd.Next(8)
+    //                 NumDefenders, rnd.Next(8)
+    //                 InvPossStrength, rnd.Next(8)
+    //                 InvPassStrength, rnd.Next(8)
+    //                 PassNotRequested, rnd.Next(8)] |> Map.ofList
+    //             InPoss,
+    //                [DistanceGoal, rnd.Next(4)
+    //                 DistanceBall, rnd.Next(4)
+    //                 NumAttackers, rnd.Next(4)
+    //                 NumDefenders, rnd.Next(4)] |> Map.ofList
+    //             OutPoss,
+    //                [DistanceGoal, rnd.Next(4)
+    //                 DistanceBall, rnd.Next(4)
+    //                 NumAttackers, rnd.Next(4)
+    //                 NumDefenders, rnd.Next(4)] |> Map.ofList]
+    //                |> Map.ofList |> Strategy.getNormalised }
+    //      strength = rnd.Next(4)
+    //      speed = rnd.Next(4)
+    //      agility = rnd.Next(4)
+    //      accuracy = rnd.Next(4) }
 
     let getRarity (trait, value) =
         match traits |> Map.tryFind trait with
         | Some values ->
             match values |> Map.tryFind value with
-            | Some count -> (float count) / 1995.0
+            | Some count -> (float count) / 1992.0
             | None -> -1.0
         | None -> -1.0
 
@@ -322,34 +490,121 @@ module Cubehead =
 
     let getTraitName (_, v) = v
 
-    let getCubeheadsForAccount cubeletsTokenAddress account =
-        async {
-            let! cubeheads = Moralis.getNFTs Config.network.cubeheadsContractAddress account
-            let! cubelets = Moralis.getNFTs cubeletsTokenAddress account
-            return 0
-        }
-
-    let getResultsForAccount account =
-        let n = rnd.Next(32)
-        List.init n (fun _ ->
-            let trophyIndex = rnd.Next(6) + 1
-            { trophySrc = "/img/trophies/trophy" + (trophyIndex.ToString()) + ".svg"
-              userTeam = [| getRndCubehead rnd; getRndCubehead rnd; getRndCubehead rnd; getRndCubehead rnd |]
-              oppTeam = [| getRndCubehead rnd; getRndCubehead rnd; getRndCubehead rnd; getRndCubehead rnd |]
-              score = rnd.Next(5), rnd.Next(5)
-              date = date.Now.AddDays(float <| -rnd.Next(60))
-              childCube = getRndCubehead rnd })
-              |> List.sortByDescending (fun r -> r.date)
-
     let allCubeheads = cubeheadsData |> Array.map fromCubeheadData |> Array.filter (fun c -> c.index < 1995) |> Array.toList |> List.sortBy (fun c -> c.index)
-
+    
     let allCubeheadsByIndex = allCubeheads |> List.map (fun c -> c.index, c) |> Map.ofList
-
+    
     let getAllCubeheads filter search =
         allCubeheads |> List.filter (fun cubehead ->
             (match search with None -> true | Some sindex -> cubehead.index = sindex) && (filter |> List.forall (fun f -> cubehead.visualTraits |> List.contains f)))
-
+    
     let getAllCubeheadsPaged filter search =
         getAllCubeheads filter search |> List.chunkBySize 27
 
     let getCubeheadByIndex index = allCubeheadsByIndex |> Map.find index
+    
+    let getCubeletByIndex contracts index =
+        async {
+            let! stokenUri = Server.getCubelet index
+            let! tokenUri =
+                match stokenUri with
+                | None ->
+                    contracts.cubeletsContract?methods?tokenURIhidden(index)?call() |> Async.AwaitPromise
+                | Some nft ->
+                    async { return nft.tokenUri }
+            let! statusCode, responseTxt = Http.get tokenUri
+            return fromCubeheadData <| !!JS.JSON.parse responseTxt
+        }
+
+    let getCubeheadGenericByIndex contracts index =
+        async {
+            if index < 65536 then
+                return getCubeheadByIndex index
+            else
+                return! getCubeletByIndex contracts index
+        }
+    
+    let getCubeheadsForAccount contracts account =
+        async {
+            let cubeletsTokenAddress = contracts.cubeletsContract?_address
+            let! cubeheadNfts = Moralis.getNFTs Config.network.cubeheadsContractAddress account
+            let! cubeletNfts = Moralis.getNFTs cubeletsTokenAddress account
+
+            let! cubelets = Server.getCubelets account
+            let cubeletByIndex = cubelets |> Array.map (fun t -> t.tokenIndex, t.tokenUri) |> Map.ofArray
+    
+            let cubeheads = cubeheadNfts |> Array.map (fun c -> getCubeheadByIndex c.token_id)
+            let! cubelets =
+                cubeletNfts
+                    |> Array.map (fun c ->
+                        async {
+                            match cubeletByIndex |> Map.tryFind c.token_id with
+                            | None -> return! getCubeletByIndex contracts c.token_id
+                            | Some uri ->
+                                let! _, responseTxt = Http.get uri
+                                return fromCubeheadData <| !!JS.JSON.parse responseTxt }) |> Async.Parallel
+    
+            return Array.append cubeheads cubelets        }
+
+    let getResultsForAccount contracts account =
+        async {
+            let! resultsRaw = Server.getResults account
+            let! trophies = Server.getTrophies account
+            let! cubelets = Server.getCubelets account
+            let trophyByIndex = trophies |> Array.map (fun t -> t.tokenIndex, t.tokenUri) |> Map.ofArray
+            let cubeletByIndex = cubelets |> Array.map (fun t -> t.tokenIndex, t.tokenUri) |> Map.ofArray
+            let! results =
+                resultsRaw |> Array.map (fun result ->
+                    async {
+                        let! trophyUri =
+                            match trophyByIndex |> Map.tryFind result.trophyIndex with
+                            | None ->
+                                contracts.cubetrophiesContract?methods?tokenURIhidden(result.trophyIndex)?call() |> Async.AwaitPromise
+                            | Some uri -> async { return uri }
+                        let! statusCode, responseTxt = Http.get trophyUri
+                        let trophy = JS.JSON.parse responseTxt
+                        let trophyType = !!(trophy?attributes |> Array.find (fun attribute -> attribute?trait_type = "Color"))?value
+                        let! teamB =
+                            result.teamB
+                                |> Array.map (getCubeheadGenericByIndex contracts)
+                                |> Async.Parallel
+                        let! teamR =
+                            result.teamR
+                                |> Array.map (getCubeheadGenericByIndex contracts)
+                                |> Async.Parallel
+                        let! childCube =
+                            match cubeletByIndex |> Map.tryFind result.cubeletIndex with
+                            | None ->
+                                getCubeletByIndex contracts result.cubeletIndex
+                            | Some uri ->
+                                async {
+                                    let! _, responseTxt = Http.get uri
+                                    return fromCubeheadData <| !!JS.JSON.parse responseTxt
+                                }
+                        return
+                            { trophySrc = !!trophy?image
+                              userTeam = if result.userR = account.ToLower() then teamR else teamB
+                              oppTeam = if result.userR = account.ToLower() then teamB else teamR
+                              userTeamColour = if result.userR = account.ToLower() then Red else Blue
+                              trophyType = trophyType
+                              score = result.scoreB, result.scoreR
+                              date = result.date
+                              childCube = childCube
+                               }
+                    }) |> Async.Parallel
+            return results
+        }
+        //let n = rnd.Next(32)
+        //List.init n (fun _ ->
+        //    let trophyIndex = rnd.Next(6) + 1
+        //    { trophySrc = "/img/trophies/trophy" + (trophyIndex.ToString()) + ".svg"
+        //      userTeam = [| getRndCubehead rnd; getRndCubehead rnd; getRndCubehead rnd; getRndCubehead rnd |]
+        //      oppTeam = [| getRndCubehead rnd; getRndCubehead rnd; getRndCubehead rnd; getRndCubehead rnd |]
+        //      score = rnd.Next(5), rnd.Next(5)
+        //      date = date.Now.AddDays(float <| -rnd.Next(60))
+        //      childCube = getRndCubehead rnd })
+        //      |> List.sortByDescending (fun r -> r.date)
+
+    
+
+    

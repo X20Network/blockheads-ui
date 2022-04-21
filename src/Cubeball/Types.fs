@@ -14,9 +14,12 @@ type Msg =
     | SelectCubehead of int * int
     | CancelTeamChanges
     | SaveTeamChanges
+    | CommitTeamSucceeded of string * int[] * obj * string
+    | CommitTeamFailed of exn
     | SaveSucceeded
     | SaveFailed
     | SetCaptainState of int * bool
+    | SignMessage
 
 type Model =
     { activeTab: Tab
@@ -25,4 +28,5 @@ type Model =
       draftTeam: ((int * bool) option)[]
       selectingCubehead: int option
       results: (WalletResult list) option
-      saving: bool }
+      saving: bool
+      messageToSign: string option }

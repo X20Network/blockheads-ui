@@ -100,9 +100,13 @@ let buyButton accountData auctionBatch auction dispatch =
     | Some _ ->
         match auction.priceSold, auctionBatch with
         | None, Some auctionBatch ->
-            let price = sprintf "%.4f" auctionBatch.price 
-            a [ClassName "button is-primary"; OnClick (fun _ -> dispatch <| MintCubehead auction.cubehead.index)] [
-                b[] [str ("Buy for " + price + " ETH")]]
+            match auction.minting with
+            | None ->
+                let price = sprintf "%.4f" auctionBatch.price 
+                a [ClassName "button is-primary"; OnClick (fun _ -> dispatch <| MintCubehead auction.cubehead.index)] [
+                    b[] [str ("Buy for " + price + " ETH")]]
+            | Some _ ->
+                div [ClassName "lds-dual-ring"] []
         | Some price, _ ->
             a [ClassName "button"; Disabled true] [
                 b[] [str <| sprintf "Sold"]]

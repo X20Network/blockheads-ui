@@ -3,47 +3,6 @@ module.exports = {
       {
         "inputs": [
           {
-            "internalType": "uint256",
-            "name": "x",
-            "type": "uint256"
-          }
-        ],
-        "name": "addPlayer",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint32",
-            "name": "p1",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "p2",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "p3",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "p4",
-            "type": "uint32"
-          }
-        ],
-        "name": "addTeam",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
             "internalType": "address",
             "name": "cubeheads",
             "type": "address"
@@ -63,100 +22,6 @@ module.exports = {
           }
         ],
         "name": "Ball",
-        "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "userAddress",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "_cube0Id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "_cube1Id",
-            "type": "uint256"
-          }
-        ],
-        "name": "breed",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "cubeheadId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "commitmentHash",
-            "type": "bytes32"
-          }
-        ],
-        "name": "commitTeams",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "t1",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "t2",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "s",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "rounds",
-            "type": "uint256"
-          }
-        ],
-        "name": "directPlay",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "result",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "scoreB",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "scoreR",
-            "type": "uint256"
-          }
-        ],
-        "name": "Game",
         "type": "event"
       },
       {
@@ -202,6 +67,61 @@ module.exports = {
           }
         ],
         "name": "LogBytes32",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "userB",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "userR",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "scoreB",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "scoreR",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint32[8]",
+            "name": "players",
+            "type": "uint32[8]"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "cubetrophyIndex",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "cubeletIndex",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "bytes32",
+            "name": "randomSeed",
+            "type": "bytes32"
+          }
+        ],
+        "name": "Match",
         "type": "event"
       },
       {
@@ -260,62 +180,6 @@ module.exports = {
         "type": "event"
       },
       {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "revealsLimit",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "stepsLimit",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "matchesLimit",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "gasRefundPriceMin",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "individualId",
-            "type": "uint256"
-          }
-        ],
-        "name": "processTournament",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "userAddress",
-            "type": "address"
-          },
-          {
-            "internalType": "uint32[]",
-            "name": "players",
-            "type": "uint32[]"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "salt",
-            "type": "bytes32"
-          }
-        ],
-        "name": "revealTeams",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
         "anonymous": false,
         "inputs": [
           {
@@ -327,52 +191,6 @@ module.exports = {
         ],
         "name": "Section",
         "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "cubeball",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "cubeminting",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "cubelets",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "cubetrophies",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "utilityFormatting",
-            "type": "address"
-          }
-        ],
-        "name": "setContractAddresses",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "cost",
-            "type": "uint256"
-          }
-        ],
-        "name": "setStrategyTrainingCost",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
       },
       {
         "anonymous": false,
@@ -473,21 +291,75 @@ module.exports = {
         "type": "event"
       },
       {
+        "anonymous": false,
         "inputs": [
           {
+            "indexed": false,
             "internalType": "uint256",
-            "name": "cubeId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "strategy",
+            "name": "tournamentId",
             "type": "uint256"
           }
         ],
-        "name": "trainStrategy",
+        "name": "Tournament",
+        "type": "event"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "x",
+            "type": "uint256"
+          }
+        ],
+        "name": "addPlayer",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint32",
+            "name": "p1",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "p2",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "p3",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "p4",
+            "type": "uint32"
+          }
+        ],
+        "name": "addTeam",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "cubeheadId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "commitmentHash",
+            "type": "bytes32"
+          }
+        ],
+        "name": "commitTeams",
+        "outputs": [],
+        "stateMutability": "payable",
         "type": "function"
       },
       {
@@ -559,6 +431,40 @@ module.exports = {
         "inputs": [
           {
             "internalType": "uint256",
+            "name": "t1",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "t2",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "s",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rounds",
+            "type": "uint256"
+          }
+        ],
+        "name": "directPlay",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "result",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
             "name": "rounds",
             "type": "uint256"
           },
@@ -603,6 +509,108 @@ module.exports = {
         "type": "function"
       },
       {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "revealsLimit",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "stepsLimit",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "matchesLimit",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "gasRefundPriceMin",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "individualId",
+            "type": "uint256"
+          }
+        ],
+        "name": "processTournament",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "userAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint32[]",
+            "name": "players",
+            "type": "uint32[]"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "salt",
+            "type": "bytes32"
+          }
+        ],
+        "name": "revealTeams",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "cubeball",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "cubeminting",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "cubelets",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "cubetrophies",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "utilityFormatting",
+            "type": "address"
+          }
+        ],
+        "name": "setContractAddresses",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "cost",
+            "type": "uint256"
+          }
+        ],
+        "name": "setStrategyTrainingCost",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
         "inputs": [],
         "name": "teamCount",
         "outputs": [
@@ -613,6 +621,24 @@ module.exports = {
           }
         ],
         "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "cubeId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "strategy",
+            "type": "uint256"
+          }
+        ],
+        "name": "trainStrategy",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
       },
       {

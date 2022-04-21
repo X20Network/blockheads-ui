@@ -5,7 +5,7 @@ open Common
 
 type Model =
     { previousPage: Page option
-      cubehead: Cubehead }
+      cubehead: Cubehead option }
 
 type Msg =
     | PreviousPage

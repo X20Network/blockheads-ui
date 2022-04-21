@@ -7,7 +7,9 @@ open Common
 type WalletData =
     { cubeheads: WalletCubehead[]
       team: (int * bool)[]
-      results: WalletResult list }
+      teamFetched: bool
+      results: WalletResult list
+      messageToSign: string }
 
 type Web3InitData =
     { auction: Home.Types.AuctionBatch }
@@ -24,12 +26,16 @@ type Msg =
     | SetWalletData of WalletData
     | SetWeb3InitData of Web3InitData
     | SetAuctionPrice of string * decimal
+    | SetSignedMessage of string
+    | SetTeam of (int * bool)[]
+    | SetCubehead of Cubehead
     | TimerTick
 
 type GlobalObjs =
     { web3Modal: Web3Modal
       window: obj
       mutable web3: Web3
+      mutable contracts: Contracts option
       cubeheadsMerkleTree: string[][] }
 
 type Model =

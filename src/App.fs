@@ -87,6 +87,7 @@ let gbl =
     { web3Modal = web3Modal
       window = window
       web3 = web3
+      contracts = None
       cubeheadsMerkleTree = Common.buildCubeheadsMerkleTree web3 }
 
 window?path <- Common.getMerklePath gbl.cubeheadsMerkleTree 888
@@ -98,7 +99,7 @@ let timer _ =
 // App
 Program.mkProgram (init gbl) (update gbl) root
 |> Program.withSubscription timer
-|> Program.toNavigable (parsePath pageParser) urlUpdate
+|> Program.toNavigable (parsePath pageParser) (urlUpdate gbl)
 #if DEBUG
 |> Program.withDebugger
 #endif
