@@ -83,7 +83,7 @@ open Elmish.Debug
 open Elmish.HMR
 
 let gbl =
-    let web3 = new Web3(new Web3HttpProvider(Common.Config.network.infuraUrl))
+    let web3 = new Web3(new Web3WsProvider(Common.Config.network.infuraWsUrl))
     { web3Modal = web3Modal
       window = window
       web3 = web3

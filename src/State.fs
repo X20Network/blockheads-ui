@@ -71,6 +71,60 @@ let createContracts (web3 :Web3) =
             cubetrophiesContract = cubetrophiesContract
         } }
 
+let getAuctionBatchFromEvent contracts (web3 :obj) (currentAuction :obj) =
+    promise {
+        // load auction
+        let origindate = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+    
+        let startTimeUx = currentAuction?returnValues?startTime
+        let repeatTime = currentAuction?returnValues?repeatTime
+        let t0 = currentAuction?returnValues?token0
+        let t1 = currentAuction?returnValues?token1
+        let t2 = currentAuction?returnValues?token2
+        let t3 = currentAuction?returnValues?token3
+        let t4 = currentAuction?returnValues?token4
+        let t5 = currentAuction?returnValues?token5
+
+        let tokenIds = [|t0; t1; t2; t3; t4; t5 |]
+
+        let startTime = origindate.AddSeconds( startTimeUx )
+        let now = DateTime.UtcNow
+        let totalDur = (now - startTime).TotalSeconds |> int
+        let num = totalDur / repeatTime
+        let startTime = startTime.AddSeconds(float (repeatTime * num))
+        let endTime = startTime.AddSeconds(float repeatTime)
+
+        let cubeheads = tokenIds |> Array.map (fun tid -> cubeheadsDataByIndex.[tid] |> Cubehead.fromCubeheadData)
+
+        let getMintEvent tokenId =
+            contracts.cubemintingContract?getPastEvents "Mint"
+                (keyValueList CaseRules.LowerFirst
+                    ["fromBlock", !!0
+                     "toBlock", !!"latest"
+                     "filter", keyValueList CaseRules.LowerFirst ["tokenId", tokenId]])
+
+        let! mintEvents = tokenIds |> Array.map getMintEvent |> Promise.Parallel
+
+        let auctions =
+            Array.zip cubeheads mintEvents
+                |> Array.map (fun (cubehead, event) ->
+                    let priceSold = if event?length > 0 then Some 1M else None
+                    { Home.Types.Auction.cubehead = cubehead; Home.Types.Auction.priceSold = priceSold; Home.Types.Auction.minting = None })
+                |> Array.toList
+
+        let! price = contracts.cubemintingContract?methods?getAuctionPrice()?call()
+        
+        return 
+            { Home.Types.endTime = endTime
+              Home.Types.auctions = auctions
+              Home.Types.timeRemaining = endTime - now
+              Home.Types.price = web3?utils?fromWei(price, "ether")
+              Home.Types.priceRaw = price
+              Home.Types.repeatTimeSecs = repeatTime } 
+        }
+
+
+
 let init gbl result =
     let initWeb3 = 
         Cmd.OfPromise.perform 
@@ -83,56 +137,11 @@ let init gbl result =
                 let! auctionEvents = contracts.cubemintingContract?getPastEvents "Auction" (keyValueList CaseRules.LowerFirst [("fromBlock", !!0); ("toBlock", !!"latest")])
                 let currentAuction = auctionEvents?at(auctionEvents?length - 1)
 
-                // load auction
-                let origindate = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-                
-                let startTimeUx = currentAuction?returnValues?startTime
-                let repeatTime = currentAuction?returnValues?repeatTime
-                let t0 = currentAuction?returnValues?token0
-                let t1 = currentAuction?returnValues?token1
-                let t2 = currentAuction?returnValues?token2
-                let t3 = currentAuction?returnValues?token3
-                let t4 = currentAuction?returnValues?token4
-                let t5 = currentAuction?returnValues?token5
-
-                let tokenIds = [|t0; t1; t2; t3; t4; t5 |]
-
-                let startTime = origindate.AddSeconds( startTimeUx )
-                let now = DateTime.UtcNow
-                let totalDur = (now - startTime).TotalSeconds |> int
-                let num = totalDur / repeatTime
-                let startTime = startTime.AddSeconds(float (repeatTime * num))
-                let endTime = startTime.AddSeconds(float repeatTime)
-
-                let cubeheads = tokenIds |> Array.map (fun tid -> cubeheadsDataByIndex.[tid] |> Cubehead.fromCubeheadData)
-
-                let getMintEvent tokenId =
-                    contracts.cubemintingContract?getPastEvents "Mint"
-                        (keyValueList CaseRules.LowerFirst
-                            ["fromBlock", !!0
-                             "toBlock", !!"latest"
-                             "filter", keyValueList CaseRules.LowerFirst ["tokenId", tokenId]])
-
-                let! mintEvents = tokenIds |> Array.map getMintEvent |> Promise.Parallel
-
-                let auctions =
-                    Array.zip cubeheads mintEvents
-                        |> Array.map (fun (cubehead, event) ->
-                            let priceSold = if event?length > 0 then Some 1M else None
-                            { Home.Types.Auction.cubehead = cubehead; Home.Types.Auction.priceSold = priceSold; Home.Types.Auction.minting = None })
-                        |> Array.toList
-
-                let! price = contracts.cubemintingContract?methods?getAuctionPrice()?call()
-
-                return 
-                    { auction =
-                        { endTime = endTime
-                          auctions = auctions
-                          timeRemaining = endTime - now
-                          price = web3?utils?fromWei(price, "ether")
-                          priceRaw = price
-                          repeatTimeSecs = repeatTime
-                            } }
+                let! auctionBatch = getAuctionBatchFromEvent contracts web3 currentAuction
+                return {
+                    auctionBlock = !!currentAuction?blockNumber
+                    auction = auctionBatch
+                }
             }) () SetWeb3InitData
     let (counter, counterCmd) = Counter.State.init()
     let (home, homeCmd) = Home.State.init()
@@ -337,11 +346,20 @@ let update gbl msg model =
                     results = Some walletData.results
                     messageToSign = Some walletData.messageToSign } }, Cmd.none
     | SetWeb3InitData web3Data ->
+        // load cubehead if cubehead page
         let cmd =
             match model.CurrentPage with
             | Cubehead index -> Cmd.OfAsync.perform (fun _ -> Cubehead.getCubeheadGenericByIndex gbl.contracts.Value index) () SetCubehead
             | _ -> Cmd.none
-        { model with Home = { model.Home with currentAuction = Some web3Data.auction } }, cmd
+        // event subscriptions
+        let eventSubCmd =
+            Cmd.ofSub (fun dispatch ->
+                gbl.contracts.Value.cubemintingContract?events?Mint(createObj ["fromBlock", !!(web3Data.auctionBlock)])?on("data", fun event ->
+                    dispatch <| MintEvent event)
+                gbl.contracts.Value.cubemintingContract?events?Auction(createObj ["fromBlock", !!(web3Data.auctionBlock)])?on("data", fun event ->
+                    dispatch <| AuctionEvent event)
+                ())
+        { model with Home = { model.Home with currentAuction = Some web3Data.auction } }, Cmd.batch [cmd; eventSubCmd]
     | SetAuctionPrice (priceRaw, price) ->
         match model.Home.currentAuction with
         | None -> model, Cmd.none
@@ -351,6 +369,17 @@ let update gbl msg model =
         match model.cubehead with
         | None -> model, Cmd.none
         | Some c -> { model with cubehead = Some { c with cubehead = Some cubehead} }, Cmd.none
+    | SetAuction auction ->
+        { model with Home = { model.Home with currentAuction = Some auction } }, Cmd.none
+    | MintEvent event ->
+        let index = event?returnValues?tokenId
+        match model.Home.currentAuction with
+        | None -> model, Cmd.none
+        | Some auction ->
+            let auctions = auction.auctions |> List.map (fun a -> if a.cubehead.index = index then { a with priceSold = Some 1M } else a)
+            { model with Home = { model.Home with currentAuction = Some { auction with auctions = auctions } } }, Cmd.none
+    | AuctionEvent event ->
+        model, Cmd.OfPromise.perform (getAuctionBatchFromEvent gbl.contracts.Value gbl.web3) event SetAuction
     | TimerTick ->
         match model.Home.currentAuction with
         | None -> model, Cmd.none

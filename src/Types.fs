@@ -12,7 +12,8 @@ type WalletData =
       messageToSign: string }
 
 type Web3InitData =
-    { auction: Home.Types.AuctionBatch }
+    { auction: Home.Types.AuctionBatch
+      auctionBlock: int64 }
 
 type Msg =
     | CounterMsg of Counter.Types.Msg
@@ -29,6 +30,9 @@ type Msg =
     | SetSignedMessage of string
     | SetTeam of (int * bool)[]
     | SetCubehead of Cubehead
+    | MintEvent of obj
+    | AuctionEvent of obj
+    | SetAuction of Home.Types.AuctionBatch
     | TimerTick
 
 type GlobalObjs =

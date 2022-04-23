@@ -16,6 +16,11 @@ type Web3HttpProvider(url :string) =
 
     member _.x :int = jsNative
 
+[<Import("default", from = "web3-providers-ws")>]
+type Web3WsProvider(url :string) =
+
+    member _.x :int = jsNative
+
 [<Import("default", from = "web3modal")>]
 type Web3Modal(config: obj) =
 

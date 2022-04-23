@@ -144,7 +144,8 @@ let auctions model =
         let hours = int <| auction.timeRemaining.TotalHours
         let mins = int <| auction.timeRemaining.TotalMinutes
         let secs = int <| auction.timeRemaining.Seconds
-        let price = sprintf "%.4f" auction.price 
+        let priceStr = auction.price.ToString()
+        let price = priceStr.Substring(0, min 10 (priceStr.Length))
         div []
             [nav [ClassName "level auction-countdown"]
                 [div [ClassName "level-item has-text-centered"]

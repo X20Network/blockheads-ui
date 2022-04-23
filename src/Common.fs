@@ -5,6 +5,7 @@ open Fable.Core.JsInterop
 
 type ChainConfig =
     { infuraUrl: string
+      infuraWsUrl: string
       chainId: int
       chainName: string
       moralisChainName: string
@@ -22,6 +23,7 @@ module Config =
 
     let private kovan =
       { infuraUrl = "https://kovan.infura.io/v3/2ba89d75124a4e0baf363346d70820fb"
+        infuraWsUrl = "wss://kovan.infura.io/ws/v3/2ba89d75124a4e0baf363346d70820fb"
         chainId = 42
         chainName = "Kovan"
         moralisChainName = "kovan"
@@ -106,7 +108,7 @@ module Server =
           cubeletIndex: int
           date: System.DateTime }
 
-    let private baseUrl = "https://cubeheadsserver.azurewebsites.net/api/"
+    let private baseUrl = "https://cubeheadsserver.azurewebsites.net/api"
 
     let getResults account =
         let url = sprintf "%s/results?account=%s" baseUrl account
