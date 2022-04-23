@@ -49,4 +49,5 @@ type Model =
       cubeball: Cubeball.Types.Model
       accountData: AccountData option
       cubehead: Cubehead.Types.Model option
-      gallery: Gallery.Types.Model }
+      gallery: Gallery.Types.Model
+      navbarMenuActive: bool }

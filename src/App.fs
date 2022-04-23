@@ -64,7 +64,7 @@ let root model dispatch =
 
   div
     []
-    [ Navbar.View.root model.accountData (NavMsg >> dispatch)
+    [ Navbar.View.root model.accountData model.navbarMenuActive (NavMsg >> dispatch)
       div [Id "page-container"]
          [div [ClassName <| containerCls model.CurrentPage] [pageHtml model.CurrentPage ]
           footer [ClassName "footer"]

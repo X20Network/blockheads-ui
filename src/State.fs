@@ -153,6 +153,7 @@ let init gbl result =
             Home = home
             accountData = None
             cubehead = None
+            navbarMenuActive = false
             gallery = { filter = Map.empty; idSearch = ""; cubeheads = [gchs1]; filteredCubeheads = gchs }
             cubeball =
               { activeTab = Cubeball.Types.Tab.AllCubeheads
@@ -244,6 +245,8 @@ let update gbl msg model =
         { model with Home = home }, Cmd.map HomeMsg homeCmd
     | NavMsg Navbar.Types.Msg.ConnectWallet ->
         model, Cmd.OfPromise.perform gbl.web3Modal.connect () SetProvider
+    | NavMsg Navbar.Types.Msg.ToggleNavbarMenu ->
+        { model with navbarMenuActive = not model.navbarMenuActive }, Cmd.none
     | CubeballMsg (Cubeball.Types.SignMessage) ->
         match model with
         | { cubeball = { messageToSign = Some message }; accountData = Some data } ->

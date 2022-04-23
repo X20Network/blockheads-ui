@@ -28,7 +28,7 @@ let wrongChain =
         [span [ClassName "tag is-danger is-medium"]
             [span [ClassName "icon"] [i [ClassName "mdi mdi-alert-outline"] []]; span [] [str <| "Connect to " + Common.Config.network.chainName]]]
 
-let root model dispatch =
+let root model navbarMenuActive dispatch =
     nav
         [ ClassName "navbar is-dark is-fixed-top" ]
         [ div
@@ -44,12 +44,12 @@ let root model dispatch =
                      | Some { chainId = chainId } when chainId <> Config.network.chainId -> wrongChain
                      | Some accountData -> connectedAccount accountData.selectedAccount]
                   a
-                    [ ClassName "navbar-burger"; AriaLabel "Menu"; Role "button"; AriaExpanded false; HTMLAttr.Custom("data-target", "navbarMenu") ]
+                    [ classBaseList "navbar-burger" ["is-active", navbarMenuActive]; AriaLabel "Menu"; Role "button"; AriaExpanded false; HTMLAttr.Custom("data-target", "navbarMenu"); OnClick (fun _ -> dispatch ToggleNavbarMenu) ]
                     [ span [AriaHidden true] []
                       span [AriaHidden true] []
                       span [AriaHidden true] [] ]]
               div
-                [ Id "navbarMenu"; ClassName "navbar-menu" ]
+                [ Id "navbarMenu"; classBaseList "navbar-menu" ["is-active", navbarMenuActive] ]
                 [ div [ClassName "navbar-start"]
                     []
                   div [ClassName "navbar-end"]
@@ -73,7 +73,8 @@ let root model dispatch =
                         [span [ClassName "icon has-text-info"]
                             [i [ClassName "mdi mdi-soccer"] []]
                          span [] [b [] [str "Cubeball"]]]
-                     match model with
-                     | None -> connectButton dispatch
-                     | Some { chainId = chainId } when chainId <> Common.Config.network.chainId -> wrongChain
-                     | Some accountData -> connectedAccount accountData.selectedAccount ] ] ] ]
+                     div [ClassName "is-hidden-mobile"] [
+                         match model with
+                         | None -> connectButton dispatch
+                         | Some { chainId = chainId } when chainId <> Common.Config.network.chainId -> wrongChain
+                         | Some accountData -> connectedAccount accountData.selectedAccount ] ] ] ] ]
