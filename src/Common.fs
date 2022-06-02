@@ -108,7 +108,7 @@ module Server =
           blockletIndex: int
           date: System.DateTime }
 
-    let private baseUrl = "https://blockheadsserver.azurewebsites.net/api"
+    let private baseUrl = "https://cubeheadsserver.azurewebsites.net/api"
 
     let getResults account =
         let url = sprintf "%s/results?account=%s" baseUrl account
@@ -220,14 +220,14 @@ let blockheadsData : BlockheadData[] = import "blockheads" "./data.js"
 let blockheadsDataByIndex =
     let arr :BlockheadData[] = Array.zeroCreate blockheadsData.Length
     blockheadsData |> Array.iter (fun blockhead ->
-        let index = blockhead.name.Substring(10) |> System.Int32.Parse
+        let index = blockhead.name.Substring(11) |> System.Int32.Parse
         arr.[index] <- blockhead)
     arr
 
 let buildBlockheadsMerkleTree web3 =
     let blockheads =
         blockheadsData |> Array.choose (fun c ->
-           let index = c.name.Substring(10) |> System.Int32.Parse
+           let index = c.name.Substring(11) |> System.Int32.Parse
            if index > 1991 then None
            else Some (index, c.data))
            |> Array.sortBy fst

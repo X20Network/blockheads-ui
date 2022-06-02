@@ -11,7 +11,7 @@ open ViewComponents
 
 let introTxt =
     ofList
-        [h1 [ClassName "title"] [str "CUBEHEADS"]
+        [h1 [ClassName "title"] [str "BLOCKHEADS"]
          p [] [b [] [str "Welcome to the Blockverse. Spacetime is now blockd."]]
          p [] [str "Blockheads are a limited collection of "; emphasise "fully on-chain"; str ", gamified NFTs that push the limits of what is possible in an NFT smart contract."]
          p [] [str "Created from "; emphasise "custom 3D voxel artwork"; str " and rendered to SVG directly within the smart contract, they require no external storage or rendering engine."]

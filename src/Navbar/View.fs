@@ -37,7 +37,7 @@ let root model navbarMenuActive dispatch =
                 [ ClassName "navbar-brand" ]
                 [ a
                     [ ClassName "navbar-item is-1 brand"; Href (toHash Home) ]
-                    [ str "CUBEHEADS" ]
+                    [ str "BLOCKHEADS" ]
                   div [ClassName "is-hidden-desktop"]
                     [match model with
                      | None -> connectButton dispatch
