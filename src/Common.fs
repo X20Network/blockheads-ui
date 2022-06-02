@@ -10,14 +10,14 @@ type ChainConfig =
       chainName: string
       moralisChainName: string
       moralisApiKey: string
-      cubeheadsContractAddress: string}
+      blockheadsContractAddress: string}
 
 type Contracts =
-    { cubeheadsContract: obj
-      cubemintingContract: obj
-      cubeletsContract: obj
-      cubeballContract: obj
-      cubetrophiesContract: obj }
+    { blockheadsContract: obj
+      blockmintingContract: obj
+      blockletsContract: obj
+      blockballContract: obj
+      blocktrophiesContract: obj }
 
 module Config =
 
@@ -28,7 +28,7 @@ module Config =
         chainName = "Kovan"
         moralisChainName = "kovan"
         moralisApiKey = "jpdexOGpbd1eIulwVUTz5Y1LB1dJow8ApkDhv6YukusfUIFLmVfCzagT4Dv8buWg"
-        cubeheadsContractAddress = "0xeAb25936bEC5C507eA2aD28014C5Cbf591D0A81F" }
+        blockheadsContractAddress = "0xBd4550D9256Be7Fc74D34a136ea895F707Ee5AfA" }
 
     let network = kovan
 
@@ -105,10 +105,10 @@ module Server =
           teamB: int[]
           teamR: int[]
           trophyIndex: int
-          cubeletIndex: int
+          blockletIndex: int
           date: System.DateTime }
 
-    let private baseUrl = "https://cubeheadsserver.azurewebsites.net/api"
+    let private baseUrl = "https://blockheadsserver.azurewebsites.net/api"
 
     let getResults account =
         let url = sprintf "%s/results?account=%s" baseUrl account
@@ -147,8 +147,8 @@ module Server =
             | _ -> return failwith <| "an error occurred fetching results: " + responseTxt
         }
 
-    let getCubelets account =
-        let url = sprintf "%s/cubelets?account=%s" baseUrl account
+    let getBlocklets account =
+        let url = sprintf "%s/blocklets?account=%s" baseUrl account
         async {
             let! statusCode, responseTxt = Http.get url
             match statusCode with
@@ -169,8 +169,8 @@ module Server =
             | _ -> return failwith <| "an error occurred fetching results: " + responseTxt
         }
 
-    let getCubelet index :Async<Nft option> =
-        let url = sprintf "%s/cubelet?index=%i" baseUrl index
+    let getBlocklet index :Async<Nft option> =
+        let url = sprintf "%s/blocklet?index=%i" baseUrl index
         async {
             let! statusCode, responseTxt = Http.get url
             match statusCode with
@@ -203,30 +203,30 @@ type AccountData =
       chainId: int
       signedMessage: string option }
 
-type CubeheadAttribute =
+type BlockheadAttribute =
     { trait_type: string
       value: string }
 
-type CubeheadData =
+type BlockheadData =
     { name: string
       description: string
       external_url: string
-      attributes: CubeheadAttribute[]
+      attributes: BlockheadAttribute[]
       data: string
       image: string }
 
-let cubeheadsData : CubeheadData[] = import "cubeheads" "./data.js"
+let blockheadsData : BlockheadData[] = import "blockheads" "./data.js"
 
-let cubeheadsDataByIndex =
-    let arr :CubeheadData[] = Array.zeroCreate cubeheadsData.Length
-    cubeheadsData |> Array.iter (fun cubehead ->
-        let index = cubehead.name.Substring(10) |> System.Int32.Parse
-        arr.[index] <- cubehead)
+let blockheadsDataByIndex =
+    let arr :BlockheadData[] = Array.zeroCreate blockheadsData.Length
+    blockheadsData |> Array.iter (fun blockhead ->
+        let index = blockhead.name.Substring(10) |> System.Int32.Parse
+        arr.[index] <- blockhead)
     arr
 
-let buildCubeheadsMerkleTree web3 =
-    let cubeheads =
-        cubeheadsData |> Array.choose (fun c ->
+let buildBlockheadsMerkleTree web3 =
+    let blockheads =
+        blockheadsData |> Array.choose (fun c ->
            let index = c.name.Substring(10) |> System.Int32.Parse
            if index > 1991 then None
            else Some (index, c.data))
@@ -242,7 +242,7 @@ let buildCubeheadsMerkleTree web3 =
                 let h2 = let index = i * 2 + 1 in if index >= n then "0x0" else l.[index]
                 let hash :string = web3?utils?soliditySha3(createObj ["type", !!"bytes32"; "value", !!h1], createObj ["type", !!"bytes32"; "value", !!h2])
                 hash))::(l::ls) |> create
-    create [cubeheads] |> List.skip 1 |> List.rev |> List.toArray
+    create [blockheads] |> List.skip 1 |> List.rev |> List.toArray
 
 let getMerklePath (tree :string[][]) index =
     tree |> Array.mapi (fun i hashes ->
@@ -362,7 +362,7 @@ module Strategy =
                    NumDefenders, opNumDef] |> Map.ofList]
                   |> Map.ofList |> getNormalised }
 
-type Cubehead =
+type Blockhead =
     { svg: string
       name: string
       index: int
@@ -378,8 +378,8 @@ type TeamStatus =
     | InTeam
     | InTeamBreeding
 
-type WalletCubehead =
-    { cubehead: Cubehead
+type WalletBlockhead =
+    { blockhead: Blockhead
       teamStatus: TeamStatus }
 
 type TeamColour =
@@ -387,16 +387,16 @@ type TeamColour =
     | Red
 
 type WalletResult =
-    { userTeam: Cubehead[]
-      oppTeam: Cubehead[]
+    { userTeam: Blockhead[]
+      oppTeam: Blockhead[]
       userTeamColour: TeamColour
       trophyType: string
       score: int * int
       date: date
-      childCube: Cubehead
+      childBlock: Blockhead
       trophySrc: string }
 
-module Cubehead =
+module Blockhead =
 
     open System
     open Fable.SimpleHttp
@@ -416,7 +416,7 @@ module Cubehead =
         | "Pink", Blue -> "#59C0EC"
         | "Pink", Red -> "#F84B06"
 
-    let fromCubeheadData (data :CubeheadData) =
+    let fromBlockheadData (data :BlockheadData) =
         let i = parseHex (data.data.Substring(50, 16))
         let index = let start = data.name.IndexOf('#') in data.name.Substring(start + 1) |> System.Int32.Parse
         { name = data.name
@@ -437,12 +437,12 @@ module Cubehead =
           speed = (i >>> 2) &&& 3
           agility = (i >>> 4) &&& 3
           accuracy = (i >>> 6) &&& 3
-          svg = if index >= 65536 then data.image else "/img/cubehead-svgs/" + data.data.Substring(24, 10).ToUpper() + ".svg" }
+          svg = if index >= 65536 then data.image else "/img/blockhead-svgs/" + data.data.Substring(24, 10).ToUpper() + ".svg" }
 
-    //let getRndCubehead (rnd :Random) =
+    //let getRndBlockhead (rnd :Random) =
     //    let index = rnd.Next(1998)
-    //    { svg = ExampleCubehead.svg
-    //      name = sprintf "Cubehead #%i"index
+    //    { svg = ExampleBlockhead.svg
+    //      name = sprintf "Blockhead #%i"index
     //      index = index
     //      visualTraits =
     //        traits |> Map.toList |> List.map (fun (trait, values) ->
@@ -492,96 +492,96 @@ module Cubehead =
 
     let getTraitName (_, v) = v
 
-    let allCubeheads = cubeheadsData |> Array.map fromCubeheadData |> Array.filter (fun c -> c.index < 1995) |> Array.toList |> List.sortBy (fun c -> c.index)
+    let allBlockheads = blockheadsData |> Array.map fromBlockheadData |> Array.filter (fun c -> c.index < 1995) |> Array.toList |> List.sortBy (fun c -> c.index)
     
-    let allCubeheadsByIndex = allCubeheads |> List.map (fun c -> c.index, c) |> Map.ofList
+    let allBlockheadsByIndex = allBlockheads |> List.map (fun c -> c.index, c) |> Map.ofList
     
-    let getAllCubeheads filter search =
-        allCubeheads |> List.filter (fun cubehead ->
-            (match search with None -> true | Some sindex -> cubehead.index = sindex) && (filter |> List.forall (fun f -> cubehead.visualTraits |> List.contains f)))
+    let getAllBlockheads filter search =
+        allBlockheads |> List.filter (fun blockhead ->
+            (match search with None -> true | Some sindex -> blockhead.index = sindex) && (filter |> List.forall (fun f -> blockhead.visualTraits |> List.contains f)))
     
-    let getAllCubeheadsPaged filter search =
-        getAllCubeheads filter search |> List.chunkBySize 27
+    let getAllBlockheadsPaged filter search =
+        getAllBlockheads filter search |> List.chunkBySize 27
 
-    let getCubeheadByIndex index = allCubeheadsByIndex |> Map.find index
+    let getBlockheadByIndex index = allBlockheadsByIndex |> Map.find index
     
-    let getCubeletByIndex contracts index =
+    let getBlockletByIndex contracts index =
         async {
-            let! stokenUri = Server.getCubelet index
+            let! stokenUri = Server.getBlocklet index
             let! tokenUri =
                 match stokenUri with
                 | None ->
-                    contracts.cubeletsContract?methods?tokenURIhidden(index)?call() |> Async.AwaitPromise
+                    contracts.blockletsContract?methods?tokenURIhidden(index)?call() |> Async.AwaitPromise
                 | Some nft ->
                     async { return nft.tokenUri }
             let! statusCode, responseTxt = Http.get tokenUri
-            return fromCubeheadData <| !!JS.JSON.parse responseTxt
+            return fromBlockheadData <| !!JS.JSON.parse responseTxt
         }
 
-    let getCubeheadGenericByIndex contracts index =
+    let getBlockheadGenericByIndex contracts index =
         async {
             if index < 65536 then
-                return getCubeheadByIndex index
+                return getBlockheadByIndex index
             else
-                return! getCubeletByIndex contracts index
+                return! getBlockletByIndex contracts index
         }
     
-    let getCubeheadsForAccount contracts account =
+    let getBlockheadsForAccount contracts account =
         async {
-            let cubeletsTokenAddress = contracts.cubeletsContract?_address
-            let! cubeheadNfts = Moralis.getNFTs Config.network.cubeheadsContractAddress account
-            let! cubeletNfts = Moralis.getNFTs cubeletsTokenAddress account
+            let blockletsTokenAddress = contracts.blockletsContract?_address
+            let! blockheadNfts = Moralis.getNFTs Config.network.blockheadsContractAddress account
+            let! blockletNfts = Moralis.getNFTs blockletsTokenAddress account
 
-            let! cubelets = Server.getCubelets account
-            let cubeletByIndex = cubelets |> Array.map (fun t -> t.tokenIndex, t.tokenUri) |> Map.ofArray
+            let! blocklets = Server.getBlocklets account
+            let blockletByIndex = blocklets |> Array.map (fun t -> t.tokenIndex, t.tokenUri) |> Map.ofArray
     
-            let cubeheads = cubeheadNfts |> Array.map (fun c -> getCubeheadByIndex c.token_id)
-            let! cubelets =
-                cubeletNfts
+            let blockheads = blockheadNfts |> Array.map (fun c -> getBlockheadByIndex c.token_id)
+            let! blocklets =
+                blockletNfts
                     |> Array.map (fun c ->
                         async {
-                            match cubeletByIndex |> Map.tryFind c.token_id with
-                            | None -> return! getCubeletByIndex contracts c.token_id
+                            match blockletByIndex |> Map.tryFind c.token_id with
+                            | None -> return! getBlockletByIndex contracts c.token_id
                             | Some uri ->
                                 let! _, responseTxt = Http.get uri
-                                return fromCubeheadData <| !!JS.JSON.parse responseTxt }) |> Async.Parallel
+                                return fromBlockheadData <| !!JS.JSON.parse responseTxt }) |> Async.Parallel
     
-            return Array.append cubeheads cubelets        }
+            return Array.append blockheads blocklets        }
 
     let getResultsForAccount contracts account =
         async {
             let! resultsRaw = Server.getResults account
             let! trophies = Server.getTrophies account
-            let! cubelets = Server.getCubelets account
+            let! blocklets = Server.getBlocklets account
             let trophyByIndex = trophies |> Array.map (fun t -> t.tokenIndex, t.tokenUri) |> Map.ofArray
-            let cubeletByIndex = cubelets |> Array.map (fun t -> t.tokenIndex, t.tokenUri) |> Map.ofArray
+            let blockletByIndex = blocklets |> Array.map (fun t -> t.tokenIndex, t.tokenUri) |> Map.ofArray
             let! results =
                 resultsRaw |> Array.map (fun result ->
                     async {
                         let! trophyUri =
                             match trophyByIndex |> Map.tryFind result.trophyIndex with
                             | None ->
-                                contracts.cubetrophiesContract?methods?tokenURIhidden(result.trophyIndex)?call() |> Async.AwaitPromise
+                                contracts.blocktrophiesContract?methods?tokenURIhidden(result.trophyIndex)?call() |> Async.AwaitPromise
                             | Some uri -> async { return uri }
                         let! statusCode, responseTxt = Http.get trophyUri
                         let trophy = JS.JSON.parse responseTxt
                         let trophyType = !!(trophy?attributes |> Array.find (fun attribute -> attribute?trait_type = "Color"))?value
                         let! teamB =
                             result.teamB
-                                |> Array.map (getCubeheadGenericByIndex contracts)
+                                |> Array.map (getBlockheadGenericByIndex contracts)
                                 |> Async.Parallel
                         let! teamR =
                             result.teamR
-                                |> Array.map (getCubeheadGenericByIndex contracts)
+                                |> Array.map (getBlockheadGenericByIndex contracts)
                                 |> Async.Parallel
-                        let! childCube =
-                            match cubeletByIndex |> Map.tryFind result.cubeletIndex with
+                        let! childBlock =
+                            match blockletByIndex |> Map.tryFind result.blockletIndex with
                             | None ->
-                                getCubeletByIndex contracts result.cubeletIndex
+                                getBlockletByIndex contracts result.blockletIndex
                             | Some uri ->
                                 async {
                                     let! _, responseTxt = Http.get uri
-                                    return fromCubeheadData <| !!JS.JSON.parse responseTxt
+                                    return fromBlockheadData <| !!JS.JSON.parse responseTxt
                                 }
                         return
                             { trophySrc = !!trophy?image
@@ -591,7 +591,7 @@ module Cubehead =
                               trophyType = trophyType
                               score = result.scoreB, result.scoreR
                               date = result.date
-                              childCube = childCube
+                              childBlock = childBlock
                                }
                     }) |> Async.Parallel
             return results
@@ -600,11 +600,11 @@ module Cubehead =
         //List.init n (fun _ ->
         //    let trophyIndex = rnd.Next(6) + 1
         //    { trophySrc = "/img/trophies/trophy" + (trophyIndex.ToString()) + ".svg"
-        //      userTeam = [| getRndCubehead rnd; getRndCubehead rnd; getRndCubehead rnd; getRndCubehead rnd |]
-        //      oppTeam = [| getRndCubehead rnd; getRndCubehead rnd; getRndCubehead rnd; getRndCubehead rnd |]
+        //      userTeam = [| getRndBlockhead rnd; getRndBlockhead rnd; getRndBlockhead rnd; getRndBlockhead rnd |]
+        //      oppTeam = [| getRndBlockhead rnd; getRndBlockhead rnd; getRndBlockhead rnd; getRndBlockhead rnd |]
         //      score = rnd.Next(5), rnd.Next(5)
         //      date = date.Now.AddDays(float <| -rnd.Next(60))
-        //      childCube = getRndCubehead rnd })
+        //      childBlock = getRndBlockhead rnd })
         //      |> List.sortByDescending (fun r -> r.date)
 
     

@@ -73,7 +73,7 @@ h1
     height: 3rem
     width: 3rem
 
-.auction-cubehead img
+.auction-blockhead img
   @include fullhd
     height: 16rem
     width: 16rem
@@ -90,14 +90,14 @@ h1
     height: 12rem
     width: 12rem
 
-.media.auction-cubehead
+.media.auction-blockhead
   border-top: 1px solid rgba(80, 80, 80, 0.15)
   padding-top: 2.5rem
 
-.media.auction-cubehead figure
+.media.auction-blockhead figure
   margin-left: 0px
 
-.cubehead img
+.blockhead img
   @include fullhd
     height: 32rem
     width: 32rem
@@ -192,13 +192,13 @@ h1
 .pt4
   padding-top: 1.5rem !important
 
-.cubehead-tile
+.blockhead-tile
   margin: 0 !important
 
-.cubehead-tile h1
+.blockhead-tile h1
   font-size: 1em
 
-.cubehead-grid
+.blockhead-grid
   display: grid
   grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr))
   grid-gap: 2rem
@@ -273,7 +273,7 @@ h1
     height: 6rem
     width: 6rem
 
-.cubehead-not-selected
+.blockhead-not-selected
   background-color: #eee
   width: 12rem
   height: 12rem
@@ -333,7 +333,7 @@ h1
 .parent-select > span
   padding-left: 0.5rem
 
-.cubeball-tabs
+.blockball-tabs
   @include desktop
     padding-bottom: 2.5rem
     padding-top: 1rem
@@ -344,7 +344,7 @@ h1
     height: 8rem
     z-index: 100
 
-.cubeball-tabs li
+.blockball-tabs li
   @include desktop
     width: 10rem
     font-weight: bold
@@ -354,18 +354,18 @@ h1
     -webkit-box-shadow: 0px 5px 15px 5px rgba(0,0,0,0.24)
     box-shadow: 0px 5px 15px 5px rgba(0,0,0,0.24)
 
-.cubeball-tabs li:first-child
+.blockball-tabs li:first-child
   border-top-left-radius: 4000px
   border-bottom-left-radius: 4000px
 
-.cubeball-tabs li:last-child
+.blockball-tabs li:last-child
   border-top-right-radius: 4000px
   border-bottom-right-radius: 4000px
 
-.cubeball-tabs li a
+.blockball-tabs li a
   background-color: white
 
-.cubeball-tabs
+.blockball-tabs
   margin-top: 1.25rem
 
 .media
@@ -388,7 +388,7 @@ h1
   justify-content: center
   padding-bottom: 2rem
 
-.result .child-cube
+.result .child-block
   margin-left: auto
   margin-right: auto
   padding-bottom: 0
@@ -396,31 +396,31 @@ h1
   padding-left: 2rem
   padding-right: 2rem
 
-.result .child-cube p
+.result .child-block p
   margin-bottom: 0.5rem
 
-.result .child-cube img
+.result .child-block img
   height: 12rem
 
-.result .child-cube i
+.result .child-block i
   font-size: 3rem
 
-.result .child-cube .icon
+.result .child-block .icon
   padding-top: 2rem !important
   color: $primary
 
-.result .child-cube img, .result .game .win
+.result .child-block img, .result .game .win
   filter: drop-shadow(0px 0px 16px $primary)
 
-.cubehead-mini
+.blockhead-mini
   padding: 0.5rem 0.5rem
   margin-bottom: 0
   text-align: center
   flex-grow: 0
 
-.cubehead-mini img
+.blockhead-mini img
 
-.cubehead-mini h1
+.blockhead-mini h1
   font-size: 0.75rem
 
 .score
@@ -474,7 +474,7 @@ h1
 
 html
   background: rgb(230,236,236)
-  background-image: url("/img/cubebackground.png")
+  background-image: url("/img/blockbackground.png")
   //background: linear-gradient(180deg, rgba(230,236,236,1) 0%, rgba(255,255,255,1) 100%) no-repeat center fixed
   background-size: 25%
   background-repeat: repeat
@@ -527,7 +527,7 @@ html
 
 .hero
   background-color: #445255
-  background-image: url("/img/cubebackgroundlight.png")
+  background-image: url("/img/blockbackgroundlight.png")
   background-size: 25%
   background-repeat: repeat
   //padding: 2rem 2rem
@@ -546,14 +546,14 @@ html
   filter: drop-shadow(0px 0px 14px rgba(128, 192, 240, 0.7))
 
 .hero2
-  background-image: url("/img/cubebackgroundgrey.png")
+  background-image: url("/img/blockbackgroundgrey.png")
   background-size: 25%
   background-repeat: repeat
   box-shadow: inset 0px 22px 16px -16px rgba(0, 0, 0, 0.9), inset 0px -22px 16px -16px rgba(0, 0, 0, 0.9)
   margin: 0rem -1.25rem
 
 .hero4
-  background-image: url("/img/cubebackgroundpurple.png")
+  background-image: url("/img/blockbackgroundpurple.png")
   background-size: 25%
   background-repeat: repeat
   box-shadow: inset 0px 22px 16px -16px rgba(0, 0, 0, 0.2), inset 0px -22px 16px -16px rgba(0, 0, 0, 0.2)
@@ -587,8 +587,8 @@ html
 .hero2 .media, .hero3 .media
   border: none
 
-.cubeheads-hero
-  background-image: url("/img/cubeheadsgridshadow.png")
+.blockheads-hero
+  background-image: url("/img/blockheadsgridshadow.png")
   background-size: 25%
   height: 24rem
   @include mobile
@@ -641,3 +641,67 @@ html
 .about .box
   padding-bottom: 0px
   margin-bottom: 2rem
+
+.guide
+  box-shadow: 0 0.5em 1em -0.125em rgb(0 0 0 / 25%), 0 0px 0 1px rgb(10 10 10 / 2%) !important
+  margin: 1rem 0rem
+
+img.guide
+  border: solid 3px white
+  border-radius: 1rem
+  max-width: 800px
+  width: 100%
+
+.blockball-diagram-container
+  box-shadow: 0 0.5em 1em -0.125em rgb(0 0 0 / 25%), 0 0px 0 1px rgb(10 10 10 / 2%) !important
+  margin: 1rem auto
+  width: 23rem
+  padding: 1rem 1rem
+  border-radius: 1rem
+  background-color: rgba(255, 255, 255, 0.6)
+
+table.blockball-diagram
+  width: 21rem
+
+table.blockball-diagram td
+  width: 7rem
+  height: 7rem
+  border: none
+
+table.blockball-diagram td.pitch
+  border: solid 3px #ddd !important
+  box-sizing: border-box
+
+table.blockball-diagram td div
+  display: flex
+  width: 100%
+  height: 100%
+  align-items: center
+  justify-content: center
+
+table.blockball-diagram td > div > span
+  color: white
+  border-radius: 100%
+  width: 1.5rem
+  height: 1.5rem
+  display: block
+  text-align: center
+  font-weight: bold
+  position: relative
+  margin: 0.25rem 0.25rem
+
+table.blockball-diagram td > div > span.red
+  background-color: #eb0000
+
+table.blockball-diagram td > div > span.blue
+  background-color: #0c1da3
+
+table.blockball-diagram .ball
+  background-color: yellow
+  width: 1rem
+  height: 1rem
+  display: block
+  position: relative
+  border-radius: 100%
+  margin: 0rem 0.25rem
+  border: 2px solid #ccc

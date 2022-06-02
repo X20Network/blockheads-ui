@@ -4,9 +4,9 @@ type Page =
     | Home
     | Counter
     | About
-    | Cubeball
+    | Blockball
     | Whitepaper
-    | Cubehead of int
+    | Blockhead of int
     | Gallery
     | UserGuide
 
@@ -15,8 +15,8 @@ let toHash page =
     | About -> "/about"
     | Counter -> "/counter"
     | Home -> "/home"
-    | Cubeball -> "/cubeball"
+    | Blockball -> "/blockball"
     | Whitepaper -> "/whitepaper"
     | Gallery -> "/gallery"
     | UserGuide -> "/guide"
-    | Cubehead index -> "/cubehead/" + index.ToString()
+    | Blockhead index -> "/blockhead/" + index.ToString()

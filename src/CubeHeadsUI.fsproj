@@ -5,8 +5,9 @@
   <ItemGroup>
     <!-- Global to the app -->
     <Compile Include="Imports.fs" />
-    <Compile Include="ExampleCubehead.fs" />
+    <Compile Include="ExampleBlockhead.fs" />
     <Compile Include="Common.fs" />
+    <Compile Include="BlockballLogic.fs" />
     <Compile Include="Global.fs" />
     <Compile Include="ViewComponents.fs" />
     <!-- Info -->
@@ -20,13 +21,13 @@
     <Compile Include="Home/State.fs" />
     <Compile Include="Home/View.fs" />
     <Compile Include="Navbar\Types.fs" />
-    <!-- Cubeball -->
-    <Compile Include="Cubeball/Types.fs" />
-    <Compile Include="Cubeball\State.fs" />
-    <Compile Include="Cubeball/View.fs" />
-    <!-- Cubehead -->
-    <Compile Include="Cubehead\Types.fs" />
-    <Compile Include="Cubehead\View.fs" />
+    <!-- Blockball -->
+    <Compile Include="Blockball/Types.fs" />
+    <Compile Include="Blockball\State.fs" />
+    <Compile Include="Blockball/View.fs" />
+    <!-- Blockhead -->
+    <Compile Include="Blockhead\Types.fs" />
+    <Compile Include="Blockhead\View.fs" />
     <!-- Gallery -->
     <Compile Include="Gallery/Types.fs" />
     <Compile Include="Gallery/State.fs" />

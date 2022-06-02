@@ -52,8 +52,8 @@ let root model dispatch =
     | Page.About -> Info.View.root
     | Counter -> Counter.View.root model.Counter (CounterMsg >> dispatch)
     | Home -> Home.View.root model.Home model.accountData (HomeMsg >> dispatch)
-    | Cubeball -> Cubeball.View.root model.cubeball model.accountData (CubeballMsg >> dispatch)
-    | Cubehead _ -> Cubehead.View.root model.cubehead (CubeheadMsg >> dispatch)
+    | Blockball -> Blockball.View.root model.blockball model.accountData (BlockballMsg >> dispatch)
+    | Blockhead _ -> Blockhead.View.root model.blockhead (BlockheadMsg >> dispatch)
     | Gallery -> Gallery.View.root model.gallery model.accountData (GalleryMsg >> dispatch)
     | UserGuide -> UserGuide.View.root
 
@@ -88,9 +88,9 @@ let gbl =
       window = window
       web3 = web3
       contracts = None
-      cubeheadsMerkleTree = Common.buildCubeheadsMerkleTree web3 }
+      blockheadsMerkleTree = Common.buildBlockheadsMerkleTree web3 }
 
-window?path <- Common.getMerklePath gbl.cubeheadsMerkleTree 888
+window?path <- Common.getMerklePath gbl.blockheadsMerkleTree 888
 
 let timer _ =
     Cmd.ofSub (fun dispatch ->

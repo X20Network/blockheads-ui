@@ -11,5 +11,5 @@ type Msg =
 type Model =
     { filter: Map<string, VisualTrait>
       idSearch: string
-      cubeheads: Cubehead list list
-      filteredCubeheads: Cubehead list list }
+      blockheads: Blockhead list list
+      filteredBlockheads: Blockhead list list }

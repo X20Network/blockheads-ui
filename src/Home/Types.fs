@@ -3,7 +3,7 @@ module Home.Types
 open Common
 
 type Auction =
-    { cubehead: Cubehead
+    { blockhead: Blockhead
       priceSold: decimal option
       minting: string option }
 
@@ -20,6 +20,6 @@ type Model =
 
 type Msg =
     | ChangeStr of string
-    | MintCubehead of int
+    | MintBlockhead of int
     | MintSuccess of int * obj
     | MintFail of int * exn

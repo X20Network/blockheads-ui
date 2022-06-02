@@ -5,7 +5,7 @@ open Imports
 open Common
 
 type WalletData =
-    { cubeheads: WalletCubehead[]
+    { blockheads: WalletBlockhead[]
       team: (int * bool)[]
       teamFetched: bool
       results: WalletResult list
@@ -19,8 +19,8 @@ type Msg =
     | CounterMsg of Counter.Types.Msg
     | HomeMsg of Home.Types.Msg
     | NavMsg of Navbar.Types.Msg
-    | CubeballMsg of Cubeball.Types.Msg
-    | CubeheadMsg of Cubehead.Types.Msg
+    | BlockballMsg of Blockball.Types.Msg
+    | BlockheadMsg of Blockhead.Types.Msg
     | GalleryMsg of Gallery.Types.Msg
     | SetProvider of obj
     | SetAccountData of AccountData
@@ -29,7 +29,7 @@ type Msg =
     | SetAuctionPrice of string * decimal
     | SetSignedMessage of string
     | SetTeam of (int * bool)[]
-    | SetCubehead of Cubehead
+    | SetBlockhead of Blockhead
     | MintEvent of obj
     | AuctionEvent of obj
     | SetAuction of Home.Types.AuctionBatch
@@ -40,14 +40,14 @@ type GlobalObjs =
       window: obj
       mutable web3: Web3
       mutable contracts: Contracts option
-      cubeheadsMerkleTree: string[][] }
+      blockheadsMerkleTree: string[][] }
 
 type Model =
     { CurrentPage: Page
       Counter: Counter.Types.Model
       Home: Home.Types.Model
-      cubeball: Cubeball.Types.Model
+      blockball: Blockball.Types.Model
       accountData: AccountData option
-      cubehead: Cubehead.Types.Model option
+      blockhead: Blockhead.Types.Model option
       gallery: Gallery.Types.Model
       navbarMenuActive: bool }

@@ -12,15 +12,15 @@ open ViewComponents
 let introTxt =
     ofList
         [h1 [ClassName "title"] [str "CUBEHEADS"]
-         p [] [b [] [str "Welcome to the Cubeverse. Spacetime is now cubed."]]
-         p [] [str "Cubeheads are a limited collection of "; emphasise "fully on-chain"; str ", gamified NFTs that push the limits of what is possible in an NFT smart contract."]
+         p [] [b [] [str "Welcome to the Blockverse. Spacetime is now blockd."]]
+         p [] [str "Blockheads are a limited collection of "; emphasise "fully on-chain"; str ", gamified NFTs that push the limits of what is possible in an NFT smart contract."]
          p [] [str "Created from "; emphasise "custom 3D voxel artwork"; str " and rendered to SVG directly within the smart contract, they require no external storage or rendering engine."]
-         p [] [str "Each Cubehead can participate with 3 others in a team sport called Cubeball, where the "; emphasise "on-chain emergent AI "; str "embedded inside each Cubehead NFT compete together for NFT trophies and the right to breed more smaller Cubeheads called Cubelets."]]
+         p [] [str "Each Blockhead can participate with 3 others in a team sport called Blockball, where the "; emphasise "on-chain emergent AI "; str "embedded inside each Blockhead NFT compete together for NFT trophies and the right to breed more smaller Blockheads called Blocklets."]]
 
 let intro =
     div [ClassName "columns"]
         [div [ClassName "column is-8"] [introTxt]
-         div [ClassName "column is-4"] [img [Src "/img/cubeheadsgrid.png"]]]
+         div [ClassName "column is-4"] [img [Src "/img/blockheadsgrid.png"]]]
 
 let strategy strategy =
     let elikely = 0.21
@@ -69,7 +69,7 @@ let strategy strategy =
                                 [i [ClassName icon] []]]]])
     div [Class "field is-grouped is-grouped-multiline"] tags
 
-let strengths cubehead =
+let strengths blockhead =
     let row name value =
         [td []
             [str name]
@@ -78,16 +78,16 @@ let strengths cubehead =
          td [Class <| if value >= 2 then "bar-on" else "bar-off"] []
          td [Class <| if value >= 3 then "bar-on" else "bar-off"] []]
     table [Class "strengths"]
-        [tr [] (row "Strength" cubehead.strength)
-         tr [] (row "Speed" cubehead.speed)
-         tr [] (row "Agility" cubehead.agility)
-         tr [] (row "Accuracy" cubehead.accuracy)]
+        [tr [] (row "Strength" blockhead.strength)
+         tr [] (row "Speed" blockhead.speed)
+         tr [] (row "Agility" blockhead.agility)
+         tr [] (row "Accuracy" blockhead.accuracy)]
 
 let visualTrait vtrait =
-    let rarity = Cubehead.getRarity vtrait
+    let rarity = Blockhead.getRarity vtrait
     div [Class "control"] 
         [div [Class "tags has-addons visual-trait"]
-            [span [Class "tag"] [b [] [str <| sprintf "%s:" (Cubehead.getTraitTypeName vtrait)]; str <| Cubehead.getTraitName vtrait]
+            [span [Class "tag"] [b [] [str <| sprintf "%s:" (Blockhead.getTraitTypeName vtrait)]; str <| Blockhead.getTraitName vtrait]
              span [Class "tag is-primary"] [str <| sprintf "%.0f%%" (rarity * 100.0) ]]]
 
 let visualTraits vtraits =
@@ -103,7 +103,7 @@ let buyButton accountData auctionBatch auction dispatch =
             match auction.minting with
             | None ->
                 let price = sprintf "%.4f" auctionBatch.price 
-                a [ClassName "button is-primary"; OnClick (fun _ -> dispatch <| MintCubehead auction.cubehead.index)] [
+                a [ClassName "button is-primary"; OnClick (fun _ -> dispatch <| MintBlockhead auction.blockhead.index)] [
                     b[] [str ("Buy for " + price + " ETH")]]
             | Some _ ->
                 div [ClassName "lds-dual-ring"] []
@@ -112,20 +112,20 @@ let buyButton accountData auctionBatch auction dispatch =
                 b[] [str <| sprintf "Sold"]]
 
 let auctionView accountData auctionBatch dispatch (auction :Auction) =
-    let image = JS.encodeURIComponent auction.cubehead.svg
+    let image = JS.encodeURIComponent auction.blockhead.svg
     let imageSrc = """data:image/svg+xml, """ + image
-    let imageIndex = auction.cubehead.index % 305
-    let imageSrc = auction.cubehead.svg
+    let imageIndex = auction.blockhead.index % 305
+    let imageSrc = auction.blockhead.svg
     let name =
         match auction.priceSold with
-        | Some _ -> h1 [] [span [Style [TextDecoration "line-through"]] [str auction.cubehead.name]; str " - "; span [ClassName "has-text-danger"] [str "SOLD"]]
-        | None -> h1 [] [str auction.cubehead.name]
-    article [ClassName "media auction-cubehead"]
+        | Some _ -> h1 [] [span [Style [TextDecoration "line-through"]] [str auction.blockhead.name]; str " - "; span [ClassName "has-text-danger"] [str "SOLD"]]
+        | None -> h1 [] [str auction.blockhead.name]
+    article [ClassName "media auction-blockhead"]
         [figure [ClassName "media-left"]
             [img [Src imageSrc]]
          div [ClassName "media-content"]
             [div [ClassName "content"]
-                [div [ClassName "mb4"] [ViewComponents.cubeheadDetailCustomName auction.cubehead name]
+                [div [ClassName "mb4"] [ViewComponents.blockheadDetailCustomName auction.blockhead name]
                  nav [ClassName "level"]
                      [div [ClassName "level-left"] []
                       div [ClassName "level-right"]
@@ -136,10 +136,7 @@ let auctionView accountData auctionBatch dispatch (auction :Auction) =
 let auctions model =
     match model.currentAuction with
     | None ->
-        div [ClassName "notification is-info"]
-            [p [] [str "All cubehead auctions have finished. Cubeheads must be purchased from secondary markets."]
-             br []
-             a [ClassName "button"] [str "Buy on Opensea"]]
+        div [ClassName "has-text-centered"] [div [ClassName "lds-dual-ring"] []]
     | Some auction ->
         let hours = int <| auction.timeRemaining.TotalHours
         let mins = int <| auction.timeRemaining.TotalMinutes
@@ -157,14 +154,14 @@ let auctions model =
                         [p [ClassName "heading"] [str "Time Remaining"]
                          h1 [ClassName "title"] [str <| sprintf "%02i:%02i:%02i" hours mins secs] ]]]]
 
-let cubeheads model =
+let blockheads model =
     match model.currentAuction with
     | None -> div [] []
     | Some auction ->
         nav [ClassName "level is-hidden-mobile"]
             (auction.auctions |> List.map (fun auction ->
-                let imageIndex = auction.cubehead.index % 305
-                let imageSrc = auction.cubehead.svg
+                let imageIndex = auction.blockhead.index % 305
+                let imageSrc = auction.blockhead.svg
                 div [ClassName "level-item"] [img [Src imageSrc]]))
 
 let root model accountData dispatch =
@@ -175,28 +172,11 @@ let root model accountData dispatch =
             [div [ClassName "box"]
                 [section [ClassName "section content"]
                     [h1 [ClassName "title"] [str "Minting"]
-                     p [] [b [] [str "Be part of the Cubeverse"]]
-                     p [] [str "Cubeheads are sold in batches of 6 in a Dutch auction. The price will start high and gradually lower until they are all sold and then a new batch will be released. "; emphasise "There will only ever be 1995 Cubeheads so make sure to be quick!"]]
+                     p [] [b [] [str "Be part of the Blockverse"]]
+                     p [] [str "Blockheads are sold in batches of 6 in a Dutch auction. The price will start high and gradually lower until they are all sold and then a new batch will be released. "; emphasise "There will only ever be 1995 Blockheads so make sure to be quick!"]]
                  section [ClassName "auction-batch-imgs"]
-                    [cubeheads model]
+                    [blockheads model]
                  section [ClassName "section"]
                     [auctions model]
                  ofOption (model.currentAuction |> Option.map (fun auction ->
                  section [ClassName "section"] (auction.auctions |> List.map (auctionView accountData model.currentAuction dispatch))))]]]
-
-let root2 model dispatch =
-  div
-    [ ]
-    [ p
-        [ ClassName "control" ]
-        [ input
-            [ ClassName "input"
-              Type "text"
-              Placeholder "Type your name"
-              DefaultValue model
-              AutoFocus true
-              OnChange (fun ev -> !!ev.target?value |> ChangeStr |> dispatch ) ] ]
-      br [ ]
-      span
-        [ ]
-        [ str (sprintf "Hello %s" model) ] ]

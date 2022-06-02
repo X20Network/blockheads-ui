@@ -20,22 +20,22 @@ let root =
         [p [] [str title]
          p [ClassName "is-size-6"] [i [] [str sub]]
          status]
-  let rmlabel1 = roadmapLabel "Cubeheads Launch" "Pushing NFT on-chain to the limits" "Complete" true
-  let rmlabel2 = roadmapLabel "Cubeball Upgrades" "Training camp, personalization, full 3D" "Q2 2022" false
-  let rmlabel3 = roadmapLabel "Cubeheads Chapter 2" "Discovery" "Q3 2022" false
-  let rmlabel4 = roadmapLabel "Cubeheads Chapter 3" "Governance" "Q4 2022" false
-  let rmlabel5 = roadmapLabel "Cubeheads Chapter 4" "Voxel Metaverse" "2023" false
+  let rmlabel1 = roadmapLabel "Blockheads Launch" "Pushing NFT on-chain to the limits" "Complete" true
+  let rmlabel2 = roadmapLabel "Blockball Upgrades" "Training camp, personalization, full 3D" "Q2 2022" false
+  let rmlabel3 = roadmapLabel "Blockheads Chapter 2" "Discovery" "Q3 2022" false
+  let rmlabel4 = roadmapLabel "Blockheads Chapter 3" "Governance" "Q4 2022" false
+  let rmlabel5 = roadmapLabel "Blockheads Chapter 4" "Voxel Metaverse" "2023" false
   div []
       [div [ClassName "block section content about"]
           [div [ClassName "box"]
             [section [ClassName "has-text-centered section content"]
                 [h1 [] [str "CUBEHEADS"]
-                 p [] [b [] [str "Welcome to the Cubeverse."]]]
-             div [ClassName "hero"] [div [ClassName "cubeheads-hero"] []]
+                 p [] [b [] [str "Welcome to the Blockverse."]]]
+             div [ClassName "hero"] [div [ClassName "blockheads-hero"] []]
              section [ClassName "section content has-text-centered container"]
-                [h2 [] [str "0xCubeo & 0xCubed"]
-                 p [] [str "Cubeheads hails from the imagination of two passionate blockchain enthusiasts who had a desire to push the limits of what was possible with an on-chain NFT collection and form a lasting community with strong crypto values and an ambitious roadmap."]
-                 img [Src "/img/teamcubes.png"]]
+                [h2 [] [str "0xBlocko & 0xBlockd"]
+                 p [] [str "Blockheads hails from the imagination of two passionate blockchain enthusiasts who had a desire to push the limits of what was possible with an on-chain NFT collection and form a lasting community with strong crypto values and an ambitious roadmap."]
+                 img [Src "/img/teamblocks.png"]]
              div [ClassName "hero2 content section has-text-centered"]
                 [h2 [] [str "Our Values"]
                  div [ClassName "container has-text-white"]
@@ -51,18 +51,18 @@ let root =
              div [ClassName "hero3 content section has-text-centered"]
                 [h2 [] [str "The Collection"]
                  div [ClassName "container"]
-                    [bullet "mdi-cube-outline"
+                    [bullet "mdi-block-outline"
                         [p [] [b [] [str "First fully on-chain 3D voxel based artwork"]]
                          p [] [str "No IPFS or external storage"]]
-                     bullet "mdi-cube-outline"
+                     bullet "mdi-block-outline"
                         [p [] [b [] [str "First fully on-chain animated artwork"]]
                          p [] [str "Pushing the limits of what's possible on-chain"]]
-                     bullet "mdi-cube-outline"
+                     bullet "mdi-block-outline"
                         [p [] [b [] [str "First on-chain game with complex emergent behavior"]]
-                         p [] [str "Enter 4 Cubeheads in the team game of Cubeball"]]
-                     bullet "mdi-cube-outline"
+                         p [] [str "Enter 4 Blockheads in the team game of Blockball"]]
+                     bullet "mdi-block-outline"
                         [p [] [b [] [str "First on-chain game with evolvable AI strategies"]]
-                         p [] [str "Improve your chances of winning by breeding Cubeheads"]]]]
+                         p [] [str "Improve your chances of winning by breeding Blockheads"]]]]
              div [ClassName "hero4 content section has-text-centered"]
                 [h2 [] [str "The Roadmap"]
                  div [ClassName "container"]

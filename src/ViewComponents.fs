@@ -65,7 +65,7 @@ let strategy tags =
                                 [i [ClassName icon] []]]]])
     div [Class "field is-grouped is-grouped-multiline"] tags
 
-let strengths cubehead =
+let strengths blockhead =
     let row name value =
         [td []
             [str name]
@@ -74,62 +74,62 @@ let strengths cubehead =
          td [Class <| if value >= 2 then "bar-on" else "bar-off"] []
          td [Class <| if value >= 3 then "bar-on" else "bar-off"] []]
     table [Class "strengths"]
-        [tr [] (row "Strength" cubehead.strength)
-         tr [] (row "Speed" cubehead.speed)
-         tr [] (row "Agility" cubehead.agility)
-         tr [] (row "Accuracy" cubehead.accuracy)]
+        [tr [] (row "Strength" blockhead.strength)
+         tr [] (row "Speed" blockhead.speed)
+         tr [] (row "Agility" blockhead.agility)
+         tr [] (row "Accuracy" blockhead.accuracy)]
 
 let visualTrait vtrait =
-    let rarity = Cubehead.getRarity vtrait
+    let rarity = Blockhead.getRarity vtrait
     div [Class "control"] 
         [div [Class "tags has-addons visual-trait"]
-            [span [Class "tag"] [b [] [str <| sprintf "%s:" (Cubehead.getTraitTypeName vtrait)]; str <| Cubehead.getTraitName vtrait]
+            [span [Class "tag"] [b [] [str <| sprintf "%s:" (Blockhead.getTraitTypeName vtrait)]; str <| Blockhead.getTraitName vtrait]
              span [Class "tag is-primary"] [str <| sprintf "%.0f%%" (rarity * 100.0) ]]]
 
 let visualTraits vtraits =
     div [Class "field is-grouped is-grouped-multiline"] (vtraits |> List.map visualTrait)
 
-let cubeheadDetailCustomName cubehead name =
-    let scoreStr = sprintf "%.1f%%" (System.Math.Round(cubehead.strategy.score * 100.0, 1))
+let blockheadDetailCustomName blockhead name =
+    let scoreStr = sprintf "%.1f%%" (System.Math.Round(blockhead.strategy.score * 100.0, 1))
     div [ClassName "content"]
         [name
          p [] [b [] [str "Visual Traits"]]
-         visualTraits cubehead.visualTraits
+         visualTraits blockhead.visualTraits
          p [] [b [] [str "Physical Traits"]]
-         strengths cubehead
-         p [] [b [] [str "Cubeball Strategy Score"]]
+         strengths blockhead
+         p [] [b [] [str "Blockball Strategy Score"]]
          p [ClassName "is-size-3 has-text-info"] [b [] [str scoreStr]]
-         p [] [b [] [str "Cubeball Behavior Traits"]]
+         p [] [b [] [str "Blockball Behavior Traits"]]
          p [ClassName "is-size-7"] [b [] [str "With the ball:"]]
-         (strategy (withBallTags cubehead.strategy))
+         (strategy (withBallTags blockhead.strategy))
          p [ClassName "is-size-7"] [b [] [str "When Attacking:"]]
-         (strategy (attackTags cubehead.strategy))
+         (strategy (attackTags blockhead.strategy))
          p [ClassName "is-size-7"] [b [] [str "When Defending:"]]
-         (strategy (defendTags cubehead.strategy))]
+         (strategy (defendTags blockhead.strategy))]
 
-let cubeheadDetail cubehead = cubeheadDetailCustomName cubehead (h1 [] [str cubehead.name])
+let blockheadDetail blockhead = blockheadDetailCustomName blockhead (h1 [] [str blockhead.name])
 
-type CubeheadCompactComponent(initialProps) =
-    inherit PureStatelessComponent<KeyedItem<Cubehead>>(initialProps)
+type BlockheadCompactComponent(initialProps) =
+    inherit PureStatelessComponent<KeyedItem<Blockhead>>(initialProps)
 
     override this.render() =
         let image = JS.encodeURIComponent this.props.Item.svg
         //let imageSrc = """data:image/svg+xml, """ + image
         let imageSrc = this.props.Item.svg
-        article [ClassName "box cubehead-tile"]
-            [a [Href <| "cubehead/" + this.props.Item.index.ToString()] [img [Src imageSrc]]
+        article [ClassName "box blockhead-tile"]
+            [a [Href <| "blockhead/" + this.props.Item.index.ToString()] [img [Src imageSrc]]
              h1 [] [str this.props.Item.name]]
 
-let cubeheadsCompact cubehead dispatch =
-    ofType<CubeheadCompactComponent, _, _> { Key = cubehead.name; Item = cubehead } []
+let blockheadsCompact blockhead dispatch =
+    ofType<BlockheadCompactComponent, _, _> { Key = blockhead.name; Item = blockhead } []
 
-let cubeheadsMini cubehead dispatch =
-    let image = JS.encodeURIComponent cubehead.svg
+let blockheadsMini blockhead dispatch =
+    let image = JS.encodeURIComponent blockhead.svg
     let imageSrc = ("""data:image/svg+xml, """ + image)
-    let imageSrc = cubehead.svg
-    article [ClassName "cubehead-mini"]
-        [a [Href <| "cubehead/" + cubehead.index.ToString()] [img [Style []; Src imageSrc ]]
-         h1 [] [str cubehead.name]]
+    let imageSrc = blockhead.svg
+    article [ClassName "blockhead-mini"]
+        [a [Href <| "blockhead/" + blockhead.index.ToString()] [img [Style []; Src imageSrc ]]
+         h1 [] [str blockhead.name]]
 
-let cubeheadsGrid cubeheadElements =
-    div [ClassName "cubehead-grid"] cubeheadElements
+let blockheadsGrid blockheadElements =
+    div [ClassName "blockhead-grid"] blockheadElements

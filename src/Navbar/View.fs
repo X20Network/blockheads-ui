@@ -55,7 +55,7 @@ let root model navbarMenuActive dispatch =
                   div [ClassName "navbar-end"]
                     [a [ClassName "navbar-item"; Href (toHash About)]
                         [span [ClassName "icon has-text-primary"]
-                            [i [ClassName "mdi mdi-cube"] []]
+                            [i [ClassName "mdi mdi-block"] []]
                          span [] [str "About"]]
                      a [ClassName "navbar-item"; Href <| toHash Gallery]
                         [span [ClassName "icon has-text-success"]
@@ -69,10 +69,10 @@ let root model navbarMenuActive dispatch =
                         [span [ClassName "icon has-text-pink"]
                             [i [ClassName "mdi mdi-note-text-outline"] []]
                          span [] [str "Whitepaper"]]
-                     a [ClassName "navbar-item"; Href (toHash Cubeball)]
+                     a [ClassName "navbar-item"; Href (toHash Blockball)]
                         [span [ClassName "icon has-text-info"]
                             [i [ClassName "mdi mdi-soccer"] []]
-                         span [] [b [] [str "Cubeball"]]]
+                         span [] [b [] [str "Blockball"]]]
                      div [ClassName "is-hidden-mobile"] [
                          match model with
                          | None -> connectButton dispatch

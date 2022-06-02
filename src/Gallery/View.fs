@@ -33,7 +33,7 @@ let filter selectedTrait traitName traitOptions dispatch =
                     dispatch (SelectTrait (traitName, trait)))]
                     [option [Value -1] []
                      ofList <| (traitOptions |> List.mapi (fun i opt ->
-                        option [Value i] [str <| Cubehead.getTraitName opt]))]]]]
+                        option [Value i] [str <| Blockhead.getTraitName opt]))]]]]
 
 let search model dispatch =
     div [ClassName "field"]
@@ -56,6 +56,6 @@ let root model accountData dispatch =
                      reset dispatch]]
              div [ClassName "column is-9"]
                 [section [ClassName "section"] [Elmish.React.Common.lazyView2With refEquals (fun model dispatch ->
-                    model.cubeheads |> List.map (fun cubeheads ->
-                        let elements = cubeheads |> List.map (fun c -> ViewComponents.cubeheadsCompact c dispatch)
-                        div [ClassName "gallery-page"] [ViewComponents.cubeheadsGrid elements]) |> ofList) model dispatch]]]]
+                    model.blockheads |> List.map (fun blockheads ->
+                        let elements = blockheads |> List.map (fun c -> ViewComponents.blockheadsCompact c dispatch)
+                        div [ClassName "gallery-page"] [ViewComponents.blockheadsGrid elements]) |> ofList) model dispatch]]]]

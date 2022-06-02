@@ -3,13 +3,29 @@ module Imports
 open Fable.Core
 open Fable.Core.JsInterop
 
+type IBN =
+
+    abstract eq :IBN -> bool
+
+    abstract div :IBN -> IBN
+
+    abstract ``mod`` :IBN -> IBN
+
+type IWeb3Util =
+
+    abstract toBN :int -> IBN
+
+    abstract toBN :string -> IBN
+
+    abstract soliditySha3 :obj -> string
+
 [<Import("default", from = "web3")>]
 type Web3(provider :obj) =
 
-    member _.x :int = jsNative
-
     [<Emit("new $0.eth.Contract($1, $2)")>]
     member _.NewContract(abi, address) :obj = jsNative
+
+    member _.utils : IWeb3Util = jsNative
 
 [<Import("default", from = "web3-providers-http")>]
 type Web3HttpProvider(url :string) =
