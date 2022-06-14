@@ -55,7 +55,7 @@ let root model navbarMenuActive dispatch =
                   div [ClassName "navbar-end"]
                     [a [ClassName "navbar-item"; Href (toHash About)]
                         [span [ClassName "icon has-text-primary"]
-                            [i [ClassName "mdi mdi-block"] []]
+                            [i [ClassName "mdi mdi-cube"] []]
                          span [] [str "About"]]
                      a [ClassName "navbar-item"; Href <| toHash Gallery]
                         [span [ClassName "icon has-text-success"]

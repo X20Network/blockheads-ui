@@ -12,7 +12,7 @@ module.exports = {
         {"value":"Camouflage","count":98},
         {"value":"Gold","count":90},
         {"value":"Blue gradient","count":109},
-        {"value":"Pink Gradient","count":101},
+        {"value":"Pink gradient","count":101},
         {"value":"Dark","count":203},
         {"value":"Pink","count":258},
         {"value":"Blue","count":248},

@@ -28,7 +28,7 @@ module Config =
         chainName = "Kovan"
         moralisChainName = "kovan"
         moralisApiKey = "jpdexOGpbd1eIulwVUTz5Y1LB1dJow8ApkDhv6YukusfUIFLmVfCzagT4Dv8buWg"
-        blockheadsContractAddress = "0xBd4550D9256Be7Fc74D34a136ea895F707Ee5AfA" }
+        blockheadsContractAddress = "0x9B4Fb76887ef09EB6B77F3988e19bD4606C95664" }
 
     let network = kovan
 
