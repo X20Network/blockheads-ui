@@ -9,19 +9,90 @@ open Common
 open System.Globalization
 open ViewComponents
 
-let introTxt =
+let carouselImgs =
+    [  "2C29473968.svg"
+       "C7E318B909.svg"
+       "A000EF309E.svg"
+       "A5B28A1541.svg"
+       "EDA1EFEE48.svg"
+       "16BBC20B53.svg"
+       "33BC003B0D.svg"
+       "4C2CB82A2D.svg"
+       "00F6E1010A.svg"
+       "075243C90A.svg" ]
+
+let bullet icon content =
+   article [ClassName "media"]
+       [figure [ClassName "media-left"] [span [ClassName "icon is-medium"] [i [ClassName <| "mdi mdi-36px " + icon] []]]
+        div [ClassName "media-content"]
+           [div [ClassName "content"]
+               content]]
+
+let carousel index =
+    let index = index % carouselImgs.Length
+    let prev = if index = 0 then carouselImgs.Length - 1 else index - 1
+    let next = if index = carouselImgs.Length - 1 then 0 else index + 1
+    div [ClassName "carousel-wrapper"]
+        [div [ClassName "carousel"]
+            (carouselImgs |> List.mapi (fun i src -> img [classList ["active", i = index; "prev", i = prev; "next", i = next];Src <| "/img/blockhead-svgs/" + src]))]
+
+let countdown (days, hours, mins, secs) =
+    nav [ClassName "level countdown"]
+        [div [ClassName "level-item has-text-centered"]
+            [div []
+                [p [ClassName "heading"] [str "Days"]
+                 p [ClassName "title"] [str <| days.ToString() ]]]
+         div [ClassName "level-item has-text-centered"]
+             [div []
+                 [p [ClassName "heading"] [str "Hours"]
+                  p [ClassName "title"] [str <| hours.ToString() ]]]
+         div [ClassName "level-item has-text-centered"]
+             [div []
+                 [p [ClassName "heading"] [str "Minutes"]
+                  p [ClassName "title"] [str <| mins.ToString() ]]]
+         div [ClassName "level-item has-text-centered"]
+             [div []
+                 [p [ClassName "heading"] [str "Seconds"]
+                  p [ClassName "title"] [str <| secs.ToString() ]]]]
+
+let introTxt timeToLaunch carouselIndex =
     ofList
         [//h1 [ClassName "title"] [str "BLOCKHEADS"]
          img [ClassName "header-logo"; Src "/img/blockheadslogo.png"] 
-         p [] [b [] [str "What happens onchain, stays onchain."]]
-         p [] [str "Blockheads are a limited collection of "; emphasise "fully on-chain"; str ", gamified NFTs that push the limits of what is possible in an NFT smart contract."]
-         p [] [str "Created from "; emphasise "custom 3D voxel artwork"; str " and rendered to SVG directly within the smart contract, they require no external storage or rendering engine."]
-         p [] [str "Each Blockhead can participate with 3 others in a team sport called Blockball, where the "; emphasise "on-chain emergent AI "; str "embedded inside each Blockhead NFT compete together for NFT trophies and the right to breed more smaller Blockheads called Blocklets."]]
+         p [ClassName "has-text-centered section content is-size-5"] [b [] [str "What happens onchain, stays onchain."]]
+         div [ClassName "hero"] [div [ClassName "blockheads-hero home"] []]
+         div [ClassName "section container"]
+            [div [ClassName "launch-date"] [p [] [str "Mint from 10th July 2022, 16:00 UTC"]]
+             countdown timeToLaunch]
+         carousel carouselIndex
+         div [ClassName "hero3 content section has-text-centered"]
+             [div [ClassName "container"]
+                 [bullet "mdi-cube-outline"
+                     [p [] [b [] [str "First fully on-chain 3D voxel based artwork"]]
+                      p [] [str "No IPFS or external storage"]]
+                  bullet "mdi-cube-outline"
+                     [p [] [b [] [str "First fully on-chain animated artwork"]]
+                      p [] [str "Pushing the limits of what's possible on-chain"]]
+                  bullet "mdi-cube-outline"
+                     [p [] [b [] [str "First on-chain game with complex emergent behavior"]]
+                      p [] [str "Enter 4 Blockheads in the team game of Blockball"]]
+                  bullet "mdi-cube-outline"
+                     [p [] [b [] [str "First on-chain game with evolvable AI strategies"]]
+                      p [] [str "Improve your chances of winning by breeding Blockheads"]]]]
+         div [ClassName "hero2 content section has-text-centered"]
+             [div [ClassName "container has-text-white"]
+                 [bullet "mdi-check-decagram-outline"
+                     [p [] [b [] [str "No royalty fees on sales"]]
+                      p [] [str "NFTs should be free to exchange"]]
+                  bullet "mdi-check-decagram-outline"
+                     [p [] [b [] [str "No profits from minting"]]
+                      p [] [str "Minting fees go into a gas pool to pay for gaming"]]
+                  bullet "mdi-check-decagram-outline"
+                     [p [] [b [] [str "No marketing BS"]]
+                      p [] [str "We're coders and our code does the talking"]]]]]
 
 let intro =
-    div [ClassName "columns"]
-        [div [ClassName "column is-8"] [introTxt]
-         div [ClassName "column is-4"] [img [Src "/img/blockheadsgrid.png"]]]
+    introTxt
 
 let strategy strategy =
     let elikely = 0.21
@@ -165,19 +236,8 @@ let blockheads model =
                 let imageSrc = auction.blockhead.svg
                 div [ClassName "level-item"] [img [Src imageSrc]]))
 
-let root model accountData dispatch =
+let root timeToLaunch carouselIndex dispatch =
     div []
-        [div [ClassName "block section content intro"]
-            [div [ClassName "box"] [div [ClassName "section content"] [intro]]]
-         div [ClassName "block section content"]
-            [div [ClassName "box"]
-                [section [ClassName "section content"]
-                    [h1 [ClassName "title"] [str "Minting"]
-                     p [] [b [] [str "Be part of the Blockverse"]]
-                     p [] [str "Blockheads are sold in batches of 6 in a Dutch auction. The price will start high and gradually lower until they are all sold and then a new batch will be released. "; emphasise "There will only ever be 1995 Blockheads so make sure to be quick!"]]
-                 section [ClassName "auction-batch-imgs"]
-                    [blockheads model]
-                 section [ClassName "section"]
-                    [auctions model]
-                 ofOption (model.currentAuction |> Option.map (fun auction ->
-                 section [ClassName "section"] (auction.auctions |> List.map (auctionView accountData model.currentAuction dispatch))))]]]
+        [div [ClassName "block section intro"]
+            [div [ClassName "box has-text-centered"] [intro timeToLaunch carouselIndex]]
+         ]

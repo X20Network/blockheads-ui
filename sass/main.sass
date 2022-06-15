@@ -45,6 +45,8 @@ h1
 
 .header-logo
   margin-bottom: 1.5rem
+  margin-top: 1.5rem
+  max-height: 4rem
 
 .auction-countdown .title
   background-color: rgba(80, 80, 80, 0.15)
@@ -502,7 +504,7 @@ html
 .footer .level
   margin: 2rem 3rem
 
-.social-icons img
+.footer img
   height: 2.5rem
 
 #page-container
@@ -510,8 +512,8 @@ html
   min-height: 100vh
   padding-bottom: 14rem
 
-.footer .social-icons img
-  margin-left: 1rem
+.footer img + img
+  margin-left: 2.5rem
 
 .medium
   padding: 0.25rem 0rem
@@ -529,12 +531,12 @@ html
   margin-bottom: 3rem
 
 .hero
-  background-color: #445255
-  background-image: url("/img/blockbackgroundlight.png")
+  //background-color: #445255
+  //background-image: url("/img/blockbackgroundlight.png")
   background-size: 25%
   background-repeat: repeat
   //padding: 2rem 2rem
-  box-shadow: inset 0px 22px 16px -16px rgba(0, 0, 0, 0.2), inset 0px -22px 16px -16px rgba(0, 0, 0, 0.2)
+  //box-shadow: inset 0px 22px 16px -16px rgba(0, 0, 0, 0.2), inset 0px -22px 16px -16px rgba(0, 0, 0, 0.2)
   //display: grid
   //grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr))
   //grid-gap: 2rem
@@ -590,10 +592,64 @@ html
 .hero2 .media, .hero3 .media
   border: none
 
+.carousel-wrapper
+  overflow: hidden
+  width: 90%
+  margin-left: auto
+  margin-right: auto
+  @include tablet
+    margin-top: -4rem
+    margin-bottom: -4rem
+
+.carousel
+  transform-style: preserve-3d
+
+.carousel > img
+  opacity: 0
+  position: absolute
+  top: 0
+  width: 100%
+  margin: auto
+  padding: 1rem 1rem
+  z-index: 100
+  transition: transform .8s, opacity .8s, z-index .8s
+  max-height: 48rem
+
+.carousel > img.prev, .carousel > img.next
+  z-index: 800
+
+.carousel > img.prev
+  transform: translateX(-100%)
+
+.carousel > img.next
+  transform: translateX(100%)
+
+.carousel > img.active
+  opacity: 1
+  position: relative
+  z-index: 900
+
+.countdown
+  max-width: 50%
+  margin-left: auto
+  margin-right: auto
+
+.launch-date
+  color: #800082
+  font-size: 1.25rem
+  font-weight: bold
+  margin-bottom: 2rem
+
+.countdown .level-item > div
+  background-color: rgba(0, 0, 0, 0.1)
+  border-radius: 1rem
+  padding: 1rem 1rem
+  width: 6rem
+
 .blockheads-hero
-  background-image: url("/img/blockheadsgridshadow.png")
+  background-image: url("/img/blockheadsgrid.png")
   background-size: 25%
-  height: 24rem
+  height: 23rem
   @include mobile
     height: 12rem
     background-size: 50%

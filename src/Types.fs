@@ -50,4 +50,6 @@ type Model =
       accountData: AccountData option
       blockhead: Blockhead.Types.Model option
       gallery: Gallery.Types.Model
-      navbarMenuActive: bool }
+      navbarMenuActive: bool
+      timeToLaunch: int * int * int * int
+      carousel: int }

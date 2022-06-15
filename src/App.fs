@@ -51,7 +51,7 @@ let root model dispatch =
     match page with
     | Page.About -> Info.View.root
     | Counter -> Counter.View.root model.Counter (CounterMsg >> dispatch)
-    | Home -> Home.View.root model.Home model.accountData (HomeMsg >> dispatch)
+    | Home -> Home.View.root model.timeToLaunch model.carousel (HomeMsg >> dispatch)
     | Blockball -> Blockball.View.root model.blockball model.accountData (BlockballMsg >> dispatch)
     | Blockhead _ -> Blockhead.View.root model.blockhead (BlockheadMsg >> dispatch)
     | Gallery -> Gallery.View.root model.gallery model.accountData (GalleryMsg >> dispatch)
@@ -68,15 +68,12 @@ let root model dispatch =
       div [Id "page-container"]
          [div [ClassName <| containerCls model.CurrentPage] [pageHtml model.CurrentPage ]
           footer [ClassName "footer"]
-            [div [ClassName "container content"]
-                [div [ClassName "level"] 
-                    [div [ClassName "level-left"] [div [ClassName "level-item"] [img [ClassName "logo";Src "/img/logo.png"]]]
-                     div [ClassName "level-right"] [div [ClassName "level-item social-icons"]
-                        [img [ClassName "opensea"; Src "/img/opensea.svg"]
-                         img [ClassName "discord"; Src "/img/discord.svg"]
-                         img [ClassName "twitter"; Src "/img/twitter.svg"]
-                         img [ClassName "instagram"; Src "/img/instagram.svg"]
-                         img [ClassName "medium"; Src "/img/medium.svg"]]]]]]]]
+            [div [ClassName "container content has-text-centered"]
+                [img [ClassName "opensea"; Src "/img/opensea.svg"]
+                 img [ClassName "discord"; Src "/img/discord.svg"]
+                 img [ClassName "twitter"; Src "/img/twitter.svg"]
+                 img [ClassName "instagram"; Src "/img/instagram.svg"]
+                 img [ClassName "medium"; Src "/img/medium.svg"]]]]]
 
 open Elmish.React
 open Elmish.Debug

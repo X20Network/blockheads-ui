@@ -38,11 +38,6 @@ let root model navbarMenuActive dispatch =
                 [ a
                     [ ClassName "navbar-item is-1 brand"; Href (toHash Home) ]
                     [ str "BLOCKHEADS" ]
-                  div [ClassName "is-hidden-desktop"]
-                    [match model with
-                     | None -> connectButton dispatch
-                     | Some { chainId = chainId } when chainId <> Config.network.chainId -> wrongChain
-                     | Some accountData -> connectedAccount accountData.selectedAccount]
                   a
                     [ classBaseList "navbar-burger" ["is-active", navbarMenuActive]; AriaLabel "Menu"; Role "button"; AriaExpanded false; HTMLAttr.Custom("data-target", "navbarMenu"); OnClick (fun _ -> dispatch ToggleNavbarMenu) ]
                     [ span [AriaHidden true] []
@@ -53,28 +48,9 @@ let root model navbarMenuActive dispatch =
                 [ div [ClassName "navbar-start"]
                     []
                   div [ClassName "navbar-end"]
-                    [a [ClassName "navbar-item"; Href (toHash About)]
-                        [span [ClassName "icon has-text-primary"]
-                            [i [ClassName "mdi mdi-cube"] []]
-                         span [] [str "About"]]
+                    [
                      a [ClassName "navbar-item"; Href <| toHash Gallery]
                         [span [ClassName "icon has-text-success"]
                             [i [ClassName "mdi mdi-view-grid-outline"] []]
                          span [] [str "Gallery"]]
-                     a [ClassName "navbar-item"; Href <| toHash UserGuide]
-                        [span [ClassName "icon has-text-warning"]
-                            [i [ClassName "mdi mdi-newspaper-variant"] []]
-                         span [] [str "User Guide"]]
-                     a [ClassName "navbar-item"]
-                        [span [ClassName "icon has-text-pink"]
-                            [i [ClassName "mdi mdi-note-text-outline"] []]
-                         span [] [str "Whitepaper"]]
-                     a [ClassName "navbar-item"; Href (toHash Blockball)]
-                        [span [ClassName "icon has-text-info"]
-                            [i [ClassName "mdi mdi-soccer"] []]
-                         span [] [b [] [str "Blockball"]]]
-                     div [ClassName "is-hidden-mobile"] [
-                         match model with
-                         | None -> connectButton dispatch
-                         | Some { chainId = chainId } when chainId <> Common.Config.network.chainId -> wrongChain
-                         | Some accountData -> connectedAccount accountData.selectedAccount ] ] ] ] ]
+                      ] ] ] ]

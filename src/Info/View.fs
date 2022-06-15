@@ -51,16 +51,16 @@ let root =
              div [ClassName "hero3 content section has-text-centered"]
                 [h2 [] [str "The Collection"]
                  div [ClassName "container"]
-                    [bullet "mdi-block-outline"
+                    [bullet "mdi-cube-outline"
                         [p [] [b [] [str "First fully on-chain 3D voxel based artwork"]]
                          p [] [str "No IPFS or external storage"]]
-                     bullet "mdi-block-outline"
+                     bullet "mdi-cube-outline"
                         [p [] [b [] [str "First fully on-chain animated artwork"]]
                          p [] [str "Pushing the limits of what's possible on-chain"]]
-                     bullet "mdi-block-outline"
+                     bullet "mdi-cube-outline"
                         [p [] [b [] [str "First on-chain game with complex emergent behavior"]]
                          p [] [str "Enter 4 Blockheads in the team game of Blockball"]]
-                     bullet "mdi-block-outline"
+                     bullet "mdi-cube-outline"
                         [p [] [b [] [str "First on-chain game with evolvable AI strategies"]]
                          p [] [str "Improve your chances of winning by breeding Blockheads"]]]]
              div [ClassName "hero4 content section has-text-centered"]

@@ -12,6 +12,8 @@ open Imports
 open Common
 open System
 
+let launchTime = new System.DateTime(2022, 7, 10, 16, 0, 0)
+
 let blockheadsAbi : obj = import "default" "./NFT-Blockheads-abi.js"
 let blockletsAbi : obj = import "default" "./NFT-Blocklets-abi.js"
 let blocktrophiesAbi : obj = import "default" "./NFT-Blocktrophies-abi.js"
@@ -147,14 +149,17 @@ let init gbl result =
     let (home, homeCmd) = Home.State.init()
     let (model, cmd) =
         let (gchs1::gchs) = Blockhead.getAllBlockheadsPaged [] None
+        let launchTs = launchTime - System.DateTime.UtcNow
         urlUpdate gbl result
-          { CurrentPage = Home
+          { timeToLaunch = launchTs.Days, launchTs.Hours, launchTs.Minutes, launchTs.Seconds
+            CurrentPage = Home
             Counter = counter
             Home = home
             accountData = None
             blockhead = None
             navbarMenuActive = false
             gallery = { filter = Map.empty; idSearch = ""; blockheads = [gchs1]; filteredBlockheads = gchs }
+            carousel = 0
             blockball =
               { activeTab = Blockball.Types.Tab.AllBlockheads
                 blockheads = None
@@ -384,14 +389,7 @@ let update gbl msg model =
     | AuctionEvent event ->
         model, Cmd.OfPromise.perform (getAuctionBatchFromEvent gbl.contracts.Value gbl.web3) event SetAuction
     | TimerTick ->
-        match model.Home.currentAuction with
-        | None -> model, Cmd.none
-        | Some auction ->
-            let cmd =
-                match model.accountData with
-                | None -> getPriceCmd
-                | Some _ -> Cmd.batch [updateAccountCmd gbl.window?web3_; getPriceCmd]
-            let endTime = if (auction.endTime - date.Now).TotalSeconds < 0.0 then auction.endTime.AddSeconds(float auction.repeatTimeSecs) else auction.endTime
-            { model with Home = { model.Home with currentAuction = Some { auction with timeRemaining = auction.endTime - date.Now; endTime = endTime } } },
-                cmd
+        let launchTs = launchTime - System.DateTime.UtcNow
+        let carousel = if launchTs.Seconds % 5 = 0 then model.carousel + 1 else model.carousel
+        { model with timeToLaunch = launchTs.Days, launchTs.Hours, launchTs.Minutes, launchTs.Seconds; carousel = carousel }, Cmd.none
     | _ -> model, Cmd.none
