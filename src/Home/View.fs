@@ -11,8 +11,9 @@ open ViewComponents
 
 let introTxt =
     ofList
-        [h1 [ClassName "title"] [str "BLOCKHEADS"]
-         p [] [b [] [str "Welcome to the Blockverse. Spacetime is now blockd."]]
+        [//h1 [ClassName "title"] [str "BLOCKHEADS"]
+         img [ClassName "header-logo"; Src "/img/blockheadslogo.png"] 
+         p [] [b [] [str "What happens onchain, stays onchain."]]
          p [] [str "Blockheads are a limited collection of "; emphasise "fully on-chain"; str ", gamified NFTs that push the limits of what is possible in an NFT smart contract."]
          p [] [str "Created from "; emphasise "custom 3D voxel artwork"; str " and rendered to SVG directly within the smart contract, they require no external storage or rendering engine."]
          p [] [str "Each Blockhead can participate with 3 others in a team sport called Blockball, where the "; emphasise "on-chain emergent AI "; str "embedded inside each Blockhead NFT compete together for NFT trophies and the right to breed more smaller Blockheads called Blocklets."]]
