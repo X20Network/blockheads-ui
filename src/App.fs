@@ -68,12 +68,12 @@ let root model dispatch =
       div [Id "page-container"]
          [div [ClassName <| containerCls model.CurrentPage] [pageHtml model.CurrentPage ]
           footer [ClassName "footer"]
-            [div [ClassName "container content has-text-centered"]
-                [img [ClassName "opensea"; Src "/img/opensea.svg"]
-                 img [ClassName "discord"; Src "/img/discord.svg"]
-                 img [ClassName "twitter"; Src "/img/twitter.svg"]
-                 img [ClassName "instagram"; Src "/img/instagram.svg"]
-                 img [ClassName "medium"; Src "/img/medium.svg"]]]]]
+            [div [ClassName "has-text-centered"]
+                [//a [Href ""; ClassName "opensea"; Target "_blank"] []
+                 a [Href ""; ClassName "discord"; Target "_blank"] []
+                 a [Href "https://twitter.com/StillBlockheads"; ClassName "twitter"; Target "_blank"] []
+                 a [Href "https://www.instagram.com/theblockheadsnetwork/"; ClassName "instagram"; Target "_blank"] []
+                 a [Href ""; ClassName "medium"; Target "_blank"] []]]]]
 
 open Elmish.React
 open Elmish.Debug

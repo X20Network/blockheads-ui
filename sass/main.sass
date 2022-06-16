@@ -48,6 +48,15 @@ h1
   margin-top: 1.5rem
   max-height: 4rem
 
+.slogan
+  font-size: 1.25rem
+  font-family: 'Orbitron', sans-serif !important
+  margin-bottom: 4rem !important
+
+.mailing-list
+  margin: 2rem auto
+  padding: 0rem 2rem
+
 .auction-countdown .title
   background-color: rgba(80, 80, 80, 0.15)
   color: black
@@ -483,6 +492,8 @@ html
   //background: linear-gradient(180deg, rgba(230,236,236,1) 0%, rgba(255,255,255,1) 100%) no-repeat center fixed
   background-size: 25%
   background-repeat: repeat
+  @include mobile
+    background-size: 75%
 
 .box
   background-color: rgba(255, 255, 255, 0.95) !important
@@ -496,7 +507,7 @@ html
   position: absolute
   bottom: 0
   width: 100%
-  z-index: -1
+  //z-index: -1
 
 .footer .logo
   height: 6rem
@@ -504,22 +515,37 @@ html
 .footer .level
   margin: 2rem 3rem
 
-.footer img
+.footer a
+  line-height: 3rem
+  display: inline-block
   height: 2.5rem
+  width: 2.5rem
+  z-index: 1000
+  position: relative
+  background-size: contain
+  background-repeat: no-repeat
+  background-position: center
+  &:hover
+    filter: brightness(120%)
+    background-image: none
+  &.opensea
+    background-image: url("/img/opensea.svg")
+  &.discord
+    background-image: url("/img/discord.svg")
+  &.twitter
+    background-image: url("/img/twitter.svg")
+  &.instagram
+    background-image: url("/img/instagram.svg")
+  &.medium
+    background-image: url("/img/medium.svg")
 
 #page-container
   position: relative
   min-height: 100vh
   padding-bottom: 14rem
 
-.footer img + img
+.footer a + a
   margin-left: 2.5rem
-
-.medium
-  padding: 0.25rem 0rem
-
-.discord
-  padding: 0.25rem 0rem
 
 .navbar.is-dark
   background-color: black
@@ -556,6 +582,8 @@ html
   background-repeat: repeat
   box-shadow: inset 0px 22px 16px -16px rgba(0, 0, 0, 0.9), inset 0px -22px 16px -16px rgba(0, 0, 0, 0.9)
   margin: 0rem -1.25rem
+  @include mobile
+    background-size: 75%
 
 .hero4
   background-image: url("/img/blockbackgroundpurple.png")
@@ -580,7 +608,7 @@ html
 .hero2 h2
   color: white
 
-.hero2 .container, .hero3 .container
+.hero2 .container, .hero3 .container, .mailing-list
   max-width: 678px
 
 .hero2 .icon
@@ -651,8 +679,8 @@ html
   background-size: 25%
   height: 23rem
   @include mobile
-    height: 12rem
-    background-size: 50%
+    height: 24rem
+    background-size: 100%
 
 .column:nth-child(1) .roadmap-label
   text-align: right

@@ -59,7 +59,7 @@ let introTxt timeToLaunch carouselIndex =
     ofList
         [//h1 [ClassName "title"] [str "BLOCKHEADS"]
          img [ClassName "header-logo"; Src "/img/blockheadslogo.png"] 
-         p [ClassName "has-text-centered section content is-size-5"] [b [] [str "What happens onchain, stays onchain."]]
+         p [ClassName "has-text-centered content slogan"] [b [] [str "What happens onchain, stays onchain."]]
          div [ClassName "hero"] [div [ClassName "blockheads-hero home"] []]
          div [ClassName "section container"]
             [div [ClassName "launch-date"] [p [] [str "Mint from 10th July 2022, 16:00 UTC"]]
@@ -89,7 +89,9 @@ let introTxt timeToLaunch carouselIndex =
                       p [] [str "Minting fees go into a gas pool to pay for gaming"]]
                   bullet "mdi-check-decagram-outline"
                      [p [] [b [] [str "No marketing BS"]]
-                      p [] [str "We're coders and our code does the talking"]]]]]
+                      p [] [str "We're coders and our code does the talking"]]]]
+         div [ClassName "mailing-list"]
+            [div [ClassName "ml-embedded"; HTMLAttr.Custom("data-form", "gsrD07")] []]]
 
 let intro =
     introTxt
