@@ -68,7 +68,7 @@ let introTxt timeToLaunch carouselIndex =
          div [ClassName "hero3 content section has-text-centered"]
              [div [ClassName "container"]
                  [bullet "mdi-cube-outline"
-                     [p [] [b [] [str "First fully on-chain 3D voxel based artwork"]]
+                     [p [] [b [] [str "First fully on-chain 3D voxel-based artwork"]]
                       p [] [str "No IPFS or external storage"]]
                   bullet "mdi-cube-outline"
                      [p [] [b [] [str "First fully on-chain animated artwork"]]

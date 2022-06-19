@@ -49,7 +49,7 @@ let root model dispatch =
 
   let pageHtml page =
     match page with
-    | Page.About -> Info.View.root
+    | Page.About -> About.View.root
     | Counter -> Counter.View.root model.Counter (CounterMsg >> dispatch)
     | Home -> Home.View.root model.timeToLaunch model.carousel (HomeMsg >> dispatch)
     | Blockball -> Blockball.View.root model.blockball model.accountData (BlockballMsg >> dispatch)

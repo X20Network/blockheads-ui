@@ -4,7 +4,6 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- Global to the app -->
-    <Compile Include="About\View.fs" />
     <Compile Include="Imports.fs" />
     <Compile Include="ExampleBlockhead.fs" />
     <Compile Include="Common.fs" />
