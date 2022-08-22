@@ -262,7 +262,10 @@ let traits :Map<string, Map<string, int>> =
         |> Map.ofList
 
 [<Emit("parseInt($0, 16)")>]
-let parseHex (str: string) : int = jsNative
+let parseHex (str: string) : int64 = jsNative
+
+[<Emit("($0 >>> $1) & ((1 << $2) - 1)")>]
+let unpackValue (num :int64) (bitIndex :int) (numBits: int) :int = jsNative
 
 let rnd = new System.Random()
 
@@ -316,27 +319,28 @@ module Strategy =
                     | OutPoss -> sumop, 4
                 ws |> Map.map (fun _ w -> (float <| max - w) / sum))
 
-    let getFromHexString (str :string) =
-        let i = parseHex (str.Substring(50, 16))
-        let wbmDistGoal = (i >>> 8) &&& 7
-        let wbmNumAtck = (i >>> 11) &&& 7
-        let wbmNumDef = (i >>> 14) &&& 7
-        let wbpDistGoal = (i >>> 17) &&& 7
-        let wbpNumAtck = (i >>> 20) &&& 7
-        let wbpNumDef = (i >>> 23) &&& 7
-        let wbpInvPos = (i >>> 26) &&& 7
-        let wbpInvPas = (i >>> 29) &&& 7
-        let wbpNotReq = (i >>> 32) &&& 7
-        let ipDistBall = (i >>> 35) &&& 3
-        let ipDistGoal = (i >>> 37) &&& 3
-        let ipNumAtck = (i >>> 39) &&& 3
-        let ipNumDef = (i >>> 41) &&& 3
-        let opDistBall = (i >>> 43) &&& 3
-        let opDistGoal = (i >>> 45) &&& 3
-        let opNumAtck = (i >>> 47) &&& 3
-        let opNumDef = (i >>> 49) &&& 3
-        let shoot = (i >>> 51) &&& 1
-        { score = 0.0
+    let getFromHexString (ranking :int) (str :string) =
+        let i = parseHex (str.Substring(50, 8))
+        let i2 = parseHex (str.Substring(58, 8))
+        let wbmDistGoal = unpackValue i 8 3//((i >>> 8) &&& 7UL) |> int
+        let wbmNumAtck = unpackValue i 11 3//((i >>> 11) &&& 7UL) |> int
+        let wbmNumDef = unpackValue i 14 3//((i >>> 14) &&& 7UL) |> int
+        let wbpDistGoal = unpackValue i 17 3//((i >>> 17) &&& 7UL) |> int
+        let wbpNumAtck = unpackValue i 20 3//((i >>> 20) &&& 7UL) |> int
+        let wbpNumDef = unpackValue i 23 3//((i >>> 23) &&& 7UL) |> int
+        let wbpInvPos = unpackValue i 26 3//((i >>> 26) &&& 7UL) |> int
+        let wbpInvPas = unpackValue i 29 3//((i >>> 29) &&& 7UL) |> int
+        let wbpNotReq = unpackValue i2 32 3//((i >>> 32) &&& 7UL) |> int
+        let ipDistBall = unpackValue i2 35 2//((i >>> 35) &&& 3UL) |> int
+        let ipDistGoal = unpackValue i2 37 2//((i >>> 37) &&& 3UL) |> int
+        let ipNumAtck = unpackValue i2 39 2//((i >>> 39) &&& 3UL) |> int
+        let ipNumDef = unpackValue i2 41 2//((i >>> 41) &&& 3UL) |> int
+        let opDistBall = unpackValue i2 43 2//((i >>> 43) &&& 3UL) |> int
+        let opDistGoal = unpackValue i2 45 2//((i >>> 45) &&& 3UL) |> int
+        let opNumAtck = unpackValue i2 47 2//((i >>> 47) &&& 3UL) |> int
+        let opNumDef = unpackValue i2 49 2//((i >>> 49) &&& 3UL) |> int
+        let shoot = unpackValue i2 51 1//((i >>> 51) &&& 1UL) |> int
+        { score = (float 1992 - float ranking) / 1992.0
           shooting = match shoot with | 0 -> ShootAlways | 1 -> WaitForOpportunity
           weightings =
               [WithBallMove,
@@ -416,9 +420,13 @@ module Blockhead =
         | "Pink", Blue -> "#59C0EC"
         | "Pink", Red -> "#F84B06"
 
-    let fromBlockheadData (data :BlockheadData) =
-        let i = parseHex (data.data.Substring(50, 16))
+    let fromBlockheadData ranking (data :BlockheadData) =
+        let i = parseHex (data.data.Substring(58, 8))
         let index = let start = data.name.IndexOf('#') in data.name.Substring(start + 1) |> System.Int32.Parse
+        let strength = unpackValue i 0 2//(i &&& 3UL) |> int
+        let speed = unpackValue i 2 2//((i >>> 2) &&& 3UL) |> int
+        let agility = unpackValue i 4 2//((i >>> 4) &&& 3UL) |> int
+        let accuracy = unpackValue i 6 2//((i >>> 6) &&& 3UL) |> int
         { name = data.name
           index = index
           visualTraits =
@@ -432,11 +440,11 @@ module Blockhead =
                     | "Speed" -> false
                     | "Strength" -> false
                     | _ -> true)
-          strategy = Strategy.getFromHexString data.data
-          strength = i &&& 3
-          speed = (i >>> 2) &&& 3
-          agility = (i >>> 4) &&& 3
-          accuracy = (i >>> 6) &&& 3
+          strategy = Strategy.getFromHexString ranking data.data
+          strength = strength
+          speed = speed
+          agility = agility
+          accuracy = accuracy
           svg = if index >= 65536 then data.image else "/img/blockhead-svgs/" + data.data.Substring(24, 10).ToUpper() + ".svg" }
 
     //let getRndBlockhead (rnd :Random) =
@@ -492,7 +500,8 @@ module Blockhead =
 
     let getTraitName (_, v) = v
 
-    let allBlockheads = blockheadsData |> Array.map fromBlockheadData |> Array.filter (fun c -> c.index < 1995) |> Array.toList |> List.sortBy (fun c -> c.index)
+    let allBlockheads =
+        blockheadsData |> Array.mapi fromBlockheadData |> Array.filter (fun c -> c.index < 1995) |> Array.toList |> List.sortBy (fun c -> c.index)
     
     let allBlockheadsByIndex = allBlockheads |> List.map (fun c -> c.index, c) |> Map.ofList
     
@@ -515,7 +524,7 @@ module Blockhead =
                 | Some nft ->
                     async { return nft.tokenUri }
             let! statusCode, responseTxt = Http.get tokenUri
-            return fromBlockheadData <| !!JS.JSON.parse responseTxt
+            return fromBlockheadData 0 <| !!JS.JSON.parse responseTxt
         }
 
     let getBlockheadGenericByIndex contracts index =
@@ -544,7 +553,7 @@ module Blockhead =
                             | None -> return! getBlockletByIndex contracts c.token_id
                             | Some uri ->
                                 let! _, responseTxt = Http.get uri
-                                return fromBlockheadData <| !!JS.JSON.parse responseTxt }) |> Async.Parallel
+                                return fromBlockheadData 0 <| !!JS.JSON.parse responseTxt }) |> Async.Parallel
     
             return Array.append blockheads blocklets        }
 
@@ -581,7 +590,7 @@ module Blockhead =
                             | Some uri ->
                                 async {
                                     let! _, responseTxt = Http.get uri
-                                    return fromBlockheadData <| !!JS.JSON.parse responseTxt
+                                    return fromBlockheadData 0 <| !!JS.JSON.parse responseTxt
                                 }
                         return
                             { trophySrc = !!trophy?image

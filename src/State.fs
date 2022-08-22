@@ -12,7 +12,7 @@ open Imports
 open Common
 open System
 
-let launchTime = new System.DateTime(2022, 7, 10, 16, 0, 0)
+let launchTime = new System.DateTime(2022, 8, 1, 16, 0, 0)
 
 let blockheadsAbi : obj = import "default" "./NFT-Blockheads-abi.js"
 let blockletsAbi : obj = import "default" "./NFT-Blocklets-abi.js"
@@ -96,7 +96,7 @@ let getAuctionBatchFromEvent contracts (web3 :obj) (currentAuction :obj) =
         let startTime = startTime.AddSeconds(float (repeatTime * num))
         let endTime = startTime.AddSeconds(float repeatTime)
 
-        let blockheads = tokenIds |> Array.map (fun tid -> blockheadsDataByIndex.[tid] |> Blockhead.fromBlockheadData)
+        let blockheads = tokenIds |> Array.map (fun tid -> blockheadsDataByIndex.[tid] |> Blockhead.fromBlockheadData 0)
 
         let getMintEvent tokenId =
             contracts.blockmintingContract?getPastEvents "Mint"

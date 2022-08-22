@@ -70,10 +70,10 @@ let root model dispatch =
           footer [ClassName "footer"]
             [div [ClassName "has-text-centered"]
                 [//a [Href ""; ClassName "opensea"; Target "_blank"] []
-                 a [Href ""; ClassName "discord"; Target "_blank"] []
+                 a [Href "https://discord.gg/cpShffArsz"; ClassName "discord"; Target "_blank"] []
                  a [Href "https://twitter.com/StillBlockheads"; ClassName "twitter"; Target "_blank"] []
                  a [Href "https://www.instagram.com/theblockheadsnetwork/"; ClassName "instagram"; Target "_blank"] []
-                 a [Href ""; ClassName "medium"; Target "_blank"] []]]]]
+                 a [Href "https://medium.com/@blockheadsnft"; ClassName "medium"; Target "_blank"] []]]]]
 
 open Elmish.React
 open Elmish.Debug

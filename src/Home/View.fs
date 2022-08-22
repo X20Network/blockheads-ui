@@ -61,9 +61,9 @@ let introTxt timeToLaunch carouselIndex =
          img [ClassName "header-logo"; Src "/img/blockheadslogo.png"] 
          p [ClassName "has-text-centered content slogan"] [b [] [str "What happens onchain, stays onchain."]]
          div [ClassName "hero"] [div [ClassName "blockheads-hero home"] []]
-         div [ClassName "section container"]
-            [div [ClassName "launch-date"] [p [] [str "Mint from 10th July 2022, 16:00 UTC"]]
-             countdown timeToLaunch]
+         //div [ClassName "section container"]
+         //   [div [ClassName "launch-date"] [p [] [str "Whitelist Opens 1st August 2022, 16:00 UTC"]]
+         //    countdown timeToLaunch]
          carousel carouselIndex
          div [ClassName "hero3 content section has-text-centered"]
              [div [ClassName "container"]
