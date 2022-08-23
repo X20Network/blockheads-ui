@@ -60,6 +60,7 @@ let root model dispatch =
   let containerCls page =
     match page with
     | Page.About -> ""
+    | Page.Home -> ""
     | _ -> "container"
 
   div

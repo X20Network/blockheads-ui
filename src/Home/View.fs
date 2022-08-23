@@ -21,6 +21,14 @@ let carouselImgs =
        "00F6E1010A.svg"
        "075243C90A.svg" ]
 
+let carouselImgs2 =
+    [ "3dblockhead1.webp"
+      "3dblockhead2.webp"
+      "3dblockhead3.webp"
+      "3dblockhead4.webp"
+      "3dblockhead5.webp"
+      "3dblockhead6.webp"]
+
 let bullet icon content =
    article [ClassName "media"]
        [figure [ClassName "media-left"] [span [ClassName "icon is-medium"] [i [ClassName <| "mdi mdi-36px " + icon] []]]
@@ -35,6 +43,14 @@ let carousel index =
     div [ClassName "carousel-wrapper"]
         [div [ClassName "carousel"]
             (carouselImgs |> List.mapi (fun i src -> img [classList ["active", i = index; "prev", i = prev; "next", i = next];Src <| "/img/blockhead-svgs/" + src]))]
+
+let carousel2 index =
+    let index = index % carouselImgs2.Length
+    let prev = if index = 0 then carouselImgs2.Length - 1 else index - 1
+    let next = if index = carouselImgs2.Length - 1 then 0 else index + 1
+    div [ClassName "carousel-wrapper"]
+        [div [ClassName "carousel"]
+            (carouselImgs2 |> List.mapi (fun i src -> img [classList ["active", i = index; "prev", i = prev; "next", i = next];Src <| "/img/" + src]))]
 
 let countdown (days, hours, mins, secs) =
     nav [ClassName "level countdown"]
@@ -239,7 +255,109 @@ let blockheads model =
                 div [ClassName "level-item"] [img [Src imageSrc]]))
 
 let root timeToLaunch carouselIndex dispatch =
-    div []
-        [div [ClassName "block section intro"]
-            [div [ClassName "box has-text-centered"] [intro timeToLaunch carouselIndex]]
-         ]
+    //div []
+    //    [div [ClassName "block section intro"]
+    //        [div [ClassName "box has-text-centered"] [intro timeToLaunch carouselIndex]]
+    //     ]
+    div [ClassName "home"]
+        [h1 [] [str "Blockheads"]
+         h2 [] [str "What happens on-chain, stays on-chain"]
+         div [Id "blockworld-container"]
+            [img [Src "/img/blockworld.webp"; Id "blockworld-image"]
+             img [Src "/img/pubglow.webp"; Id "pubglow-image"; ClassName "blockworld-highlight"]
+             img [Src "/img/stadiumglow.webp"; Id "stadiumglow-image"; ClassName "blockworld-highlight"]
+             img [Src "/img/galleryglow.webp"; Id "galleryglow-image"; ClassName "blockworld-highlight"]
+             // factory area
+             a [Style [Top "15%"; Left "21.5%"; Width "15%"; Height "28%"]; ClassName "blockworld-area"; Id "factory-area"; Href "#factory"]
+                []
+             div [] [
+                img [Src "/img/factoryglow.webp"; Id "factoryglow-image"; ClassName "blockworld-highlight"]
+                a [Style [Top "13%"; Left "21.5%"];ClassName "blockworld-label"] [str "Blockheads Factory"]]
+             // research lab area
+             a [Style [Top "20.5%"; Left "36.5%"; Width "14%"; Height "28%"]; ClassName "blockworld-area"; Id "lab-area"; Href "#lab"]
+                []
+             div [] [
+                 img [Src "/img/labglow.webp"; Id "labglow-image"; ClassName "blockworld-highlight"]
+                 a [Style [Top "17%"; Left "36.5%"]; ClassName "blockworld-label"] [str "Block Labs"]]
+             // pub area
+             a [Style [Top "20.5%"; Left "36.5%"; Width "14%"; Height "28%"]; ClassName "blockworld-area"; Id "pub-area"; Href "#pub"]
+                []
+             ]
+         section [ClassName "vlight"]
+            [div [ClassName "blockheadsgrid"] []]
+         section [ClassName "vlight"; Id "section1"]
+            [div [ClassName "container"] 
+                [div [ClassName "left"]
+                    [h1 [] [str "Full 3D, 100% On-chain NFT"]
+                     p [] [str "Blockheads is a collection of 1995 unique, fully on-chain 3D NFTs. Instead of storing a simple picture file on a server or IPFS, we built a custom voxel rendering engine inside an Ethereum smart contract. This means your art will last as long as the blockchain itself."]]
+                 div [ClassName "right"]
+                    [img [Src "/img/gridrenderblockhead.webp"]]]]
+         section [ClassName "vlight"]
+            [div [ClassName "container"]
+                [div [ClassName "left"]
+                    [carousel carouselIndex]
+                 div [ClassName "right"]
+                    [h1 [] [str "Displayed as SVG"]
+                     p [] [str "Blockheads NFTs can directly output isometric svg images. We really pushed the NFT smart contract to the limit."]]]]
+         section [ClassName "vlight"]
+            [div [ClassName "container"]
+                [div [ClassName "left"]
+                    [h1 [] [str "Output as 3D GLTF File"]
+                     p [] [str "Blockheads NFTs can also output standard 3D GLTF files directly from the contract. These files are ready for model viewers, 3D rendering and metaverses."]]
+                 div [ClassName "right"]
+                    [carousel2 carouselIndex]]]
+         section [ClassName "vlight"]
+            [div [ClassName "blockheadsgrid"] []]
+         section [ClassName "purple has-text-centered"; Id "factory"]
+            [img [ClassName "title-image"; Src "/img/factory2.webp"]
+             h1 [] [str "The Blockheads Factory"]
+             p [] [str "Follow us on Twitter for updates on when minting will start"]
+             img [Src "/img/minting.svg"; Id "minting-image"]
+             div [ClassName "icon-point"]
+                [p [] [span [ClassName "icon is-medium"] [i [ClassName "mdi mdi-36px mdi-check-decagram-outline"] []]]
+                 p [ClassName "point-title"] [str "Fair Minting Process"]
+                 p [] [str "We will mint in a dutch auction process in batches of 6 blockheads"]]
+             div [ClassName "icon-point"]
+                 [p [] [span [ClassName "icon is-medium"] [i [ClassName "mdi mdi-36px mdi-check-decagram-outline"] []]]
+                  p [ClassName "point-title"] [str "No Royalties"]
+                  p [] [str "NFTs should be free to exchange"]]
+             div [ClassName "icon-point"]
+                 [p [] [span [ClassName "icon is-medium"] [i [ClassName "mdi mdi-36px mdi-check-decagram-outline"] []]]
+                  p [ClassName "point-title"] [str "No Profits from Minting"]
+                  p [] [str "Minting fees go into a gas pool to pay for on-chain games"]]]
+         section [ClassName "vlight"]
+            [div [ClassName "blockheadsgrid"] []]
+         section [ClassName "vlight has-text-centered"]
+            [img [Src "/img/stadium.webp"; Id "stadium-image"]
+             h1 [] [str "The Blockball Stadium"]]
+         section [ClassName "vlight"]
+            [div [ClassName "container"]
+                [div [ClassName "left"]
+                    [h1 [] [str "100% On-chain Game"]
+                     p [] [str "Blockheads can form teams of 4 to play games of Blockball - an AI powered, cellular automata inspired football game that happens entirely on-chain and with full complex emergent behavior and unpredictable results."]]
+                 div [ClassName "right"]
+                    [img [Src "/img/blockball.svg"; Id "blockball-image"]]]]
+         section [ClassName "vlight"]
+             [div [ClassName "container"]
+                 [div [ClassName "left"]
+                    [img [Src "/img/gridrendertrophy.webp"]]
+                  div [ClassName "right"]
+                     [h1 [] [str "On-chain Winner Trophy NFT"]
+                      p [] [str "Winners of Blockball receive a fully 3D, on-chain, animated NFT trophy that shows all the action in the Blockball game. There are 6 different color-schemes to collect."]]
+                  ]]
+         section [ClassName "vlight"]
+             [div [ClassName "container"]
+                 [div [ClassName "left"]
+                     [h1 [] [str "Evolvable AI"]
+                      p [] [str "Winners of a Blockball game can breed 2 Blockheads together to create a Blocklet NFT. This Blocklet can be included in future games and is a combination of the AI of its parents. In this way it is possible to evolve better teams to increase your chances of winning Blockball."]]
+                  div [ClassName "right"]
+                     [img [Src "/img/evolve.svg"; Id "evolve-image"]]]]
+         section [ClassName "vlight"]
+            [div [ClassName "blockheadsgrid"] []]
+         section [Id "team-section"; ClassName "blue has-text-centered "]
+            [h1 [] [str "About Us"]
+             img [Src "/img/mechanism.png"; Id "mechanism-image"]
+             p [] [str "Blockheads were created by two developers with a belief that engineering and code is a form of art."; br []; str "No matter what happens in this space we will put technology and a desire to build genuine value above all else."; br []; str "These NFTs reflect our values and passion."]
+             img [Src "/img/kyubu.png"]
+             img [Src "/img/bloxor.png"]
+             ]]

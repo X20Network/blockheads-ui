@@ -488,12 +488,164 @@ h1
 
 html
   background: rgb(230,236,236)
-  background-image: url("/img/blockbackground.webp")
+  background-image: url("/img/blockbackgroundgrey.webp")
   //background: linear-gradient(180deg, rgba(230,236,236,1) 0%, rgba(255,255,255,1) 100%) no-repeat center fixed
   background-size: 25%
   background-repeat: repeat
   @include mobile
     background-size: 75%
+
+.home
+  display: flex
+  flex-direction: column
+  h1
+    font-size: 4.5rem
+    color: white
+    text-align: center
+    text-transform: uppercase
+    margin-top: 2rem
+    background: rgba(0, 0, 0, 0.3)
+    border-radius: 1rem
+    display: inline-block
+    align-self: center
+    box-shadow: 0px 0px 60px 60px rgba(0, 0, 0, 0.3)
+  h2
+    font-size: 1.25rem
+    font-family: orbitron
+    color: white
+    text-align: center
+    display: inline-block
+    align-self: center
+  .icon-point
+    margin-top: 4rem
+    .icon
+      color: $blue
+    .point-title
+      font-weight: bold
+    &:last-child
+      margin-bottom: 4rem
+  section
+    width: 100%
+    .title-image
+      max-height: 32rem
+    .blockheadsgrid
+      width: 100%
+      height: 126px
+      background-image: url("/img/blockheadsgridwide.png")
+      background-size: 25%
+      background-repeat: repeat
+    .container
+      display: flex
+      align-items: center
+      justify-content: center
+    h1
+      background: none
+      color: black
+      font-size: 2rem
+      box-shadow: none
+      margin: 0rem 0rem
+      margin-bottom: 1rem
+      text-transform: none
+      display: block
+    .left h1, .right h1
+      background: none
+      color: black
+      font-size: 2rem
+      box-shadow: none
+      display: block
+      text-align: left
+      margin: 0rem 0rem
+      margin-bottom: 1rem
+      text-transform: none
+    p
+      font-size: 1.5rem
+      color: black
+    .left, .right
+      width: 50%
+      padding: 0rem 2rem
+  #section1
+    //min-height: 40rem
+  #team-section
+    margin-bottom: -2.5rem
+    #mechanism-image
+      height: 22rem
+      width: auto
+    img
+      width: 50%
+    h1
+      margin-top: 4rem
+    p
+      margin-bottom: 4rem
+      margin-top: 2rem
+  #minting-image
+    height: 32rem
+    margin-top: 4rem
+  #blockball-image
+    height: 40rem
+    margin: 4rem 0rem
+  #evolve-image
+    height: 32rem
+    margin: 4rem 0rem
+  #stadium-image
+    height: 24rem
+    margin-top: 4rem
+    margin-bottom: 1rem
+  #blockworld-container
+    position: relative
+    img
+      display: block
+  #blockworld-image
+    position: static
+  .blockworld-highlight
+    position: absolute
+    opacity: 0
+    top: 0px
+  .blockworld-area
+    background: red
+    opacity: 0
+    position: absolute
+    z-index: 1000
+    &:hover + div > .blockworld-label
+      display: block
+    &:hover + div > .blockworld-highlight
+      opacity: 1
+  .blockworld-label
+    position: absolute
+    display: none
+    background: rgba(207, 242, 248, 0.75)
+    padding: 0.5rem 1rem
+    border-radius: 1rem
+    color: black
+    font-weight: bold
+    font-family: orbitron
+    border: 2px solid rgba(207, 242, 248)
+    &:hover
+      display: block
+  #factory-area
+    clip-path: polygon(35% 0%, 7.5% 25%, 0% 66%, 76% 100%, 100% 80%, 100% 24%)
+  #lab-area
+    clip-path: polygon(0% 80%, 0% 37%, 30% 0%, 100% 40%, 100% 80%, 70% 100%)
+
+.vlight
+  background-image: url("/img/blockbackgroundvlight.webp")
+  background-size: 25%
+  background-repeat: repeat
+
+.purple
+  background-image: url("/img/blockbackgroundpurple.png")
+  background-size: 25%
+  background-repeat: repeat
+  min-height: 22rem
+  h1, p
+    color: white !important
+  
+.blue
+  background-image: url("/img/blockbackgroundblue.webp")
+  background-size: 25%
+  background-repeat: repeat
+  min-height: 22rem
+  h1, p
+    color: white !important
 
 .box
   background-color: rgba(255, 255, 255, 0.95) !important
@@ -503,7 +655,7 @@ html
   background-color: #e0edf3
 
 .footer
-  background-color: #445255
+  background-color: black
   position: absolute
   bottom: 0
   width: 100%
@@ -625,9 +777,6 @@ html
   width: 90%
   margin-left: auto
   margin-right: auto
-  @include tablet
-    margin-top: -4rem
-    margin-bottom: -4rem
 
 .carousel
   transform-style: preserve-3d
